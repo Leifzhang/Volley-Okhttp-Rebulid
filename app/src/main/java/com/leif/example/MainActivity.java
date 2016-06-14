@@ -5,9 +5,17 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
+
+import com.leif.api.ReposApi;
+import com.leif.baseapi.ResponseListener;
+import com.leif.baseapi.VolleyQueue;
+import com.leif.moudle.ReposEntity;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -17,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -26,6 +33,22 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+        ReposApi api = new ReposApi(new ResponseListener<List<ReposEntity>>() {
+            private int i;
+
+            @Override
+            public void onSuccess(List<ReposEntity> model, boolean isCache) {
+                for (ReposEntity entity : model) {
+                    Toast.makeText(MainActivity.this, entity.getName() + "    " + i++, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onErrorResponse(int code, String error) {
+
+            }
+        });
+        VolleyQueue.getInstance().addRequest(api.getRequest());
     }
 
     @Override
