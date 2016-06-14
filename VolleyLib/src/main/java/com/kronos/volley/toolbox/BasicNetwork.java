@@ -118,7 +118,7 @@ public class BasicNetwork implements Network {
                 if (responseContents != null) {
                     networkResponse = new NetworkResponse(statusCode, responseContents,
                             responseHeaders, false);
-                    if (statusCode ==   HttpURLConnection.HTTP_UNAUTHORIZED ||
+                    if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED ||
                             statusCode == HttpURLConnection.HTTP_FORBIDDEN) {
                         attemptRetryOnException("auth",
                                 request, new AuthFailureError(networkResponse));
@@ -131,6 +131,11 @@ public class BasicNetwork implements Network {
                 }
             }
         }
+    }
+
+    @Override
+    public void addHeader(Map<String, String> header) {
+        mHttpStack.addHeader(header);
     }
 
 

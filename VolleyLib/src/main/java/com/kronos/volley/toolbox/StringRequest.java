@@ -66,15 +66,14 @@ public class StringRequest extends Request<NetResponse> {
     }
 
     @Override
-    protected RequestResponse<NetResponse> parseNetworkResponse(NetworkResponse response) {
+    protected RequestResponse<NetResponse> parseNetworkResponse(NetworkResponse response) throws Exception {
         NetResponse netResponse = null;
         try {
             String parsed = new String(response.data, "UTF-8");
             Object o = apiParser.parse(parsed);
-            netResponse = new NetResponse(response.isCache, parsed, o);
+            netResponse = new NetResponse(response.isCache, o);
         } catch (Exception e) {
-            //parsed = new String(response.data);
-            netResponse = new NetResponse(false, "", null);
+            throw new VolleyError(response);
         }
         return RequestResponse.success(netResponse, HttpHeaderParser.parseCacheHeaders(response));
     }

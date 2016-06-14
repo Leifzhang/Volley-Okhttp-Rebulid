@@ -21,7 +21,6 @@ import android.net.Uri;
 import android.os.SystemClock;
 import android.text.TextUtils;
 
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -465,7 +464,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
      * @param response RequestResponse from the network
      * @return The parsed response, or null in the case of an error
      */
-    abstract protected RequestResponse<T> parseNetworkResponse(NetworkResponse response);
+    abstract protected RequestResponse<T> parseNetworkResponse(NetworkResponse response) throws Exception;
 
     /**
      * Subclasses can override this method to parse 'networkError' and return a more specific error.

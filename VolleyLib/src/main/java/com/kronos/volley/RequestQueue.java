@@ -321,4 +321,8 @@ public class RequestQueue {
             }
         }
     }
+
+    public void addHeader(Map<String, String> header) {
+            mNetwork.addHeader(header);
+    }
 }

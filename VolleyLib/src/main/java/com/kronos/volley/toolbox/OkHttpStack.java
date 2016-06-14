@@ -7,6 +7,7 @@ import com.kronos.volley.AuthFailureError;
 import com.kronos.volley.Request;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import okhttp3.Call;
@@ -31,6 +32,7 @@ public class OkHttpStack implements HttpStack {
             throw new NullPointerException("Client must not be null.");
         }
         this.client = client;
+        mHeaders = new HashMap<>();
     }
 
     public OkHttpClient getClient() {
@@ -46,7 +48,7 @@ public class OkHttpStack implements HttpStack {
         okHttpRequestBuilder.url(request.getUrl());
 
         Map<String, String> headers = request.getHeaders();
-
+        headers.putAll(mHeaders);
         for (final String name : headers.keySet()) {
             okHttpRequestBuilder.addHeader(name, headers.get(name));
         }
@@ -59,9 +61,7 @@ public class OkHttpStack implements HttpStack {
 
         okhttp3.Request okHttpRequest = okHttpRequestBuilder.build();
         Call okHttpCall = client.newCall(okHttpRequest);
-        Response okHttpResponse = okHttpCall.execute();
-
-        return okHttpResponse;
+        return okHttpCall.execute();
 
     }
 
@@ -130,5 +130,12 @@ public class OkHttpStack implements HttpStack {
                     .build();
         }
         return RequestBody.create(MediaType.parse(r.getBodyContentType()), body);
+    }
+
+    private Map<String, String> mHeaders;
+
+    public void addHeader(Map<String, String> header) {
+        if (header != null)
+            mHeaders.putAll(header);
     }
 }

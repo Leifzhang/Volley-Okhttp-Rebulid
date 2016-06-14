@@ -43,4 +43,5 @@ public interface HttpStack {
     Response performRequest(Request<?> request, Map<String, String> additionalHeaders)
             throws IOException, AuthFailureError;
 
+    void addHeader(Map<String, String> header);
 }
