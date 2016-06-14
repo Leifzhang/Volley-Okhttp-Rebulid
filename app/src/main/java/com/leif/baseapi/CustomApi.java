@@ -44,28 +44,17 @@ public class CustomApi implements BaseApi {
             responseListener.onErrorResponse(ErrorCode.EMPTYURL, "url为空");
             return null;
         }
-        if (checkAddTimeStemp()) {
-            url += String.format("&_eva_t=%d", System.currentTimeMillis() / 1000);
-        } else {
-            if (Method() != Request.Method.GET) {
-                url += String.format("?_eva_t=%d", System.currentTimeMillis() / 1000);
-            }
-        }
-        StringRequest request = new StringRequest(Method(), url, new RequestResponse.Listener<NetResponse>() {
+        StringRequest request = new StringRequest(url);
+        request.setRequestListener(new RequestResponse.Listener<NetResponse>() {
             @Override
             public void onResponse(NetResponse response) {
-                if (TextUtils.isEmpty(response.result)) {
-                    onError(ErrorCode.PASERERROR, "返回值为空");
-                    return;
-                }
                 try {
                     responseListener.onSuccess(response.data, response.isCache);
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-        }, new RequestResponse.ErrorListener() {
+        }).setErrorListener(new RequestResponse.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 try {
@@ -74,17 +63,11 @@ public class CustomApi implements BaseApi {
                     e.printStackTrace();
                 }
             }
-        });
+        }).setMethod(Method()).setHeader(getHeader()).setApiParser(getParser()).setCacheTime(cacheTime).setIsRefreshNeed(isNeedRefersh);
         Map<String, String> map = getRequestBody();
         if (map != null) {
             map.put("_eva_t", System.currentTimeMillis() / 1000 + "");
             request.setRequestBody(map);
-        }
-        request.setHeader(getHeader());
-        request.setApiParser(getParser());
-        if (cacheTime > 0) {
-            request.setCacheTime(cacheTime);
-            request.setIsRefershNeed(isNeedRefersh);
         }
         return request;
     }

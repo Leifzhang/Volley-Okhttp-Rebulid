@@ -2,7 +2,6 @@ package com.kronos.volley.toolbox;
 
 
 import com.kronos.volley.AuthFailureError;
-import com.kronos.volley.RequestResponse;
 
 import org.json.JSONObject;
 
@@ -10,12 +9,9 @@ import org.json.JSONObject;
  * Created by zhangyang on 16/1/27.
  */
 public class JsonRequest extends StringRequest {
-    public JsonRequest(int method, String url, RequestResponse.Listener<NetResponse> listener, RequestResponse.ErrorListener errorListener) {
-        super(method, url, listener, errorListener);
-    }
 
-    public JsonRequest(String url, RequestResponse.Listener<NetResponse> listener, RequestResponse.ErrorListener errorListener) {
-        super(url, listener, errorListener);
+    public JsonRequest(String url) {
+        super(url);
     }
 
     @Override

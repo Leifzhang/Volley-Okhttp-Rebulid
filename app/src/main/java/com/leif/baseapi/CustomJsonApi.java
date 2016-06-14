@@ -40,20 +40,17 @@ public class CustomJsonApi implements BaseApi {
         if (TextUtils.isEmpty(url)) {
             return null;
         }
-        JsonRequest request = new JsonRequest(Method(), url, new RequestResponse.Listener<NetResponse>() {
+        JsonRequest request = new JsonRequest(url);
+        request.setRequestListener(new RequestResponse.Listener<NetResponse>() {
             @Override
             public void onResponse(NetResponse response) {
-                if (TextUtils.isEmpty(response.result)) {
-                    onError(ErrorCode.PASERERROR, "返回值为空");
-                    return;
-                }
                 try {
                     responseListener.onSuccess(response.data, response.isCache);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-        }, new RequestResponse.ErrorListener() {
+        }).setErrorListener(new RequestResponse.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 try {
@@ -62,14 +59,8 @@ public class CustomJsonApi implements BaseApi {
                     e.printStackTrace();
                 }
             }
-        });
+        }).setMethod(Method()).setHeader(getHeader()).setApiParser(getParser()).setCacheTime(cacheTime).setIsRefreshNeed(isNeedRefresh);
         request.setRequestBody(getRequestJSONBody());
-        request.setHeader(getHeader());
-        request.setApiParser(getParser());
-        if (cacheTime > 0) {
-            request.setCacheTime(cacheTime);
-            request.setIsRefershNeed(isNeedRefersh);
-        }
         return request;
     }
 
@@ -117,14 +108,14 @@ public class CustomJsonApi implements BaseApi {
 
     long cacheTime = 0;
 
-    boolean isNeedRefersh = false;
+    boolean isNeedRefresh = false;
 
     public void setCacheTime(long cacheTime) {
         this.cacheTime = cacheTime;
     }
 
     public void setIsNeedRefersh(boolean isNeedRefersh) {
-        this.isNeedRefersh = isNeedRefersh;
+        this.isNeedRefresh = isNeedRefersh;
     }
 
     public void onError(int statusCode, String errorMessage) {

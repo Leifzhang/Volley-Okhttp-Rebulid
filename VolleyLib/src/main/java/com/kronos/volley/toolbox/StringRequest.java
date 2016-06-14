@@ -16,9 +16,6 @@
 
 package com.kronos.volley.toolbox;
 
-import android.net.Uri;
-import android.text.TextUtils;
-
 import com.kronos.volley.AuthFailureError;
 import com.kronos.volley.NetworkResponse;
 import com.kronos.volley.Request;
@@ -31,8 +28,12 @@ import java.util.Map;
  * A canned request for retrieving the response body at a given URL as a String.
  */
 public class StringRequest extends Request<NetResponse> {
-    private final RequestResponse.Listener<NetResponse> mListener;
+    private RequestResponse.Listener<NetResponse> mListener;
     private Map<String, String> requestBody;
+
+    public StringRequest(String url) {
+        super(url);
+    }
 
     /**
      * Creates a new request with the given method.
@@ -44,20 +45,14 @@ public class StringRequest extends Request<NetResponse> {
      */
     public StringRequest(int method, String url, RequestResponse.Listener<NetResponse> listener,
                          RequestResponse.ErrorListener errorListener) {
-        super(method, url, errorListener);
-        mListener = listener;
+        super(url);
+        setErrorListener(errorListener).setMethod(method);
+        setRequestListener(listener);
     }
 
-
-    /**
-     * Creates a new GET request.
-     *
-     * @param url           URL to fetch the string at
-     * @param listener      Listener to receive the String response
-     * @param errorListener Error listener, or null to ignore errors
-     */
-    public StringRequest(String url, RequestResponse.Listener<NetResponse> listener, RequestResponse.ErrorListener errorListener) {
-        this(Method.GET, url, listener, errorListener);
+    public Request setRequestListener(RequestResponse.Listener<NetResponse> mListener) {
+        this.mListener = mListener;
+        return this;
     }
 
     @Override
@@ -70,7 +65,7 @@ public class StringRequest extends Request<NetResponse> {
         NetResponse netResponse = null;
         try {
             String parsed = new String(response.data, "UTF-8");
-            Object o = apiParser.parse(parsed);
+            Object o = getApiParser().parse(parsed);
             netResponse = new NetResponse(response.isCache, o);
         } catch (Exception e) {
             throw new VolleyError(response);
@@ -86,15 +81,7 @@ public class StringRequest extends Request<NetResponse> {
 
     @Override
     public String getCacheKey() {
-        Uri uri = Uri.parse(getUrl());
-        String timeStamp = uri.getQueryParameter("_eva_t");
-        String url = getUrl();
-        if (!TextUtils.isEmpty(timeStamp))
-            url = url.replace(String.format("_eva_t=%s", timeStamp), "");
-        if (requestBody != null)
-            return MD5.MD5(String.format("%s_%s", url, requestBody.toString()));
-        else
-            return MD5.MD5(url);
+        return MD5.MD5(getUrl());
     }
 
     @Override
@@ -102,13 +89,10 @@ public class StringRequest extends Request<NetResponse> {
         return requestBody;
     }
 
-    public void setRequestBody(Map<String, String> requestBody) {
+    public StringRequest setRequestBody(Map<String, String> requestBody) {
         this.requestBody = requestBody;
+        return this;
     }
 
-    private BaseApiParser apiParser;
 
-    public void setApiParser(BaseApiParser apiParser) {
-        this.apiParser = apiParser;
-    }
 }

@@ -21,6 +21,9 @@ import android.net.Uri;
 import android.os.SystemClock;
 import android.text.TextUtils;
 
+import com.kronos.volley.toolbox.BaseApiParser;
+import com.kronos.volley.toolbox.StringRequest;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -58,7 +61,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
      * Request method of this request.  Currently supports GET, POST, PUT, DELETE, HEAD, OPTIONS,
      * TRACE, and PATCH.
      */
-    private final int mMethod;
+    private int mMethod = Method.GET;
 
     /**
      * URL of this request.
@@ -73,7 +76,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     /**
      * Listener interface for errors.
      */
-    private final RequestResponse.ErrorListener mErrorListener;
+    private RequestResponse.ErrorListener mErrorListener;
 
     /**
      * Sequence number of this request, used to enforce FIFO ordering.
@@ -132,13 +135,21 @@ public abstract class Request<T> implements Comparable<Request<T>> {
      * delivery of responses is provided by subclasses, who have a better idea of how to deliver
      * an already-parsed response.
      */
-    public Request(int method, String url, RequestResponse.ErrorListener listener) {
-        mMethod = method;
+    public Request(String url) {
         mUrl = url;
-        mErrorListener = listener;
         setRetryPolicy(new DefaultRetryPolicy());
 
         mDefaultTrafficStatsTag = findDefaultTrafficStatsTag(url);
+    }
+
+    public Request<?> setErrorListener(RequestResponse.ErrorListener mErrorListener) {
+        this.mErrorListener = mErrorListener;
+        return this;
+    }
+
+    public Request<?> setMethod(int mMethod) {
+        this.mMethod = mMethod;
+        return this;
     }
 
     /**
@@ -524,31 +535,47 @@ public abstract class Request<T> implements Comparable<Request<T>> {
                 + getPriority() + " " + mSequence;
     }
 
-    private boolean isRefershNeed = false;
+    private boolean isRefreshNeed = false;
 
-    public boolean isRefershNeed() {
-        return isRefershNeed;
+    public boolean isRefreshNeed() {
+        return isRefreshNeed;
     }
 
-    public void setIsRefershNeed(boolean isRefershNeed) {
-        this.isRefershNeed = isRefershNeed;
+    public Request<T> setIsRefreshNeed(boolean isRefreshNeed) {
+        this.isRefreshNeed = isRefreshNeed;
+        return this;
     }
 
     private Map<String, String> header = new HashMap<>();
 
-    public void setHeader(Map<String, String> map) {
+    public Request<T> setHeader(Map<String, String> map) {
         if (map != null)
             this.header = map;
+        return this;
     }
 
     private long cacheTime = 0;
 
-    public void setCacheTime(long cacheTime) {
-        this.cacheTime = cacheTime;
-        setShouldCache(true);
+    public Request<T> setCacheTime(long cacheTime) {
+        if (cacheTime >= 0) {
+            this.cacheTime = cacheTime;
+            setShouldCache(true);
+        }
+        return this;
     }
 
     public long getCacheTime() {
         return cacheTime;
+    }
+
+    private BaseApiParser apiParser;
+
+    public Request<T> setApiParser(BaseApiParser apiParser) {
+        this.apiParser = apiParser;
+        return this;
+    }
+
+    public BaseApiParser getApiParser() {
+        return apiParser;
     }
 }
