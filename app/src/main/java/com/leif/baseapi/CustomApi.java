@@ -64,11 +64,7 @@ public class CustomApi implements BaseApi {
                 }
             }
         }).setMethod(Method()).setHeader(getHeader()).setApiParser(getParser()).setCacheTime(cacheTime).setIsRefreshNeed(isNeedRefersh);
-        Map<String, String> map = getRequestBody();
-        if (map != null) {
-            map.put("_eva_t", System.currentTimeMillis() / 1000 + "");
-            request.setRequestBody(map);
-        }
+        request.setRequestBody(getRequestBody());
         return request;
     }
 
