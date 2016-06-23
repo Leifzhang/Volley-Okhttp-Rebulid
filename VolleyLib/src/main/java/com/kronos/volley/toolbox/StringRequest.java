@@ -68,6 +68,7 @@ public class StringRequest extends Request<NetResponse> {
             Object o = getApiParser().parse(parsed);
             netResponse = new NetResponse(response.isCache, o);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new VolleyError(response);
         }
         return RequestResponse.success(netResponse, HttpHeaderParser.parseCacheHeaders(response));
