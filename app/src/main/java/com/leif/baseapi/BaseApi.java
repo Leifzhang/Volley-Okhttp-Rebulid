@@ -1,6 +1,7 @@
 package com.leif.baseapi;
 
 import com.kronos.volley.Request;
+import com.kronos.volley.toolbox.BaseApiParser;
 
 import org.json.JSONObject;
 
@@ -24,4 +25,7 @@ public interface BaseApi {
 
     BaseApiParser getParser();
 
+    void start();
+
+    void cancel();
 }

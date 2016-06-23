@@ -1,11 +1,12 @@
 package com.leif.baseapi;
 
-import com.google.gson.Gson;
+import com.alibaba.fastjson.JSON;
+import com.kronos.volley.toolbox.BaseApiParser;
 
 /**
  * Created by zhangyang on 16/1/28.
  */
-public class GsonApiParser extends BaseApiParser {
+public class GsonApiParser implements BaseApiParser {
     private Class mClass;
 
     public GsonApiParser(Class mClass) {
@@ -14,8 +15,6 @@ public class GsonApiParser extends BaseApiParser {
 
     @Override
     public Object parse(String content) throws Exception {
-        Gson gson = new Gson();
-        Object model = gson.fromJson(content, mClass);
-        return model;
+        return JSON.parseObject(content, mClass);
     }
 }

@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import com.leif.api.ReposApi;
 import com.leif.baseapi.ResponseListener;
-import com.leif.baseapi.VolleyQueue;
 import com.leif.moudle.ReposEntity;
 
 import java.util.List;
@@ -48,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        VolleyQueue.getInstance().addRequest(api.getRequest());
+        api.start();
     }
 
     @Override

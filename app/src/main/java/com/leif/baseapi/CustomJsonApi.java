@@ -3,25 +3,34 @@ package com.leif.baseapi;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 
 import com.kronos.volley.Request;
 import com.kronos.volley.RequestResponse;
 import com.kronos.volley.VolleyError;
+import com.kronos.volley.toolbox.BaseApiParser;
 import com.kronos.volley.toolbox.JsonRequest;
 import com.kronos.volley.toolbox.NetResponse;
+import com.leif.baseapi.host.UrlPacker;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Map;
 
+import rx.Observable;
+import rx.Subscriber;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
+
 /**
  * Created by zhangyang on 16/1/27.
  */
-public class CustomJsonApi implements BaseApi {
+public abstract class CustomJsonApi implements BaseApi {
     private ResponseListener responseListener;
     protected Bundle bundle;
     private String Tag = getClass().getName();
+    private String realUrl;
 
     public CustomJsonApi(ResponseListener responseListener) {
         this(responseListener, null);
@@ -34,9 +43,21 @@ public class CustomJsonApi implements BaseApi {
         this.bundle = bundle;
     }
 
+    protected String getRealUrl() {
+        if (TextUtils.isEmpty(realUrl)) {
+            realUrl = getUrl();
+            if (!Patterns.WEB_URL.matcher(realUrl).matches()) {
+                realUrl = UrlPacker.pack(getUrl(), Method() == Request.Method.GET ? getRequestBody() : null);
+                if (!Patterns.WEB_URL.matcher(realUrl).matches())
+                    throw new NullPointerException();
+            }
+        }
+        return realUrl;
+    }
+
     @Override
     public Request getRequest() {
-        String url = getUrl();
+        String url = getRealUrl();
         if (TextUtils.isEmpty(url)) {
             return null;
         }
@@ -62,11 +83,6 @@ public class CustomJsonApi implements BaseApi {
         }).setMethod(Method()).setHeader(getHeader()).setApiParser(getParser()).setCacheTime(cacheTime).setIsRefreshNeed(isNeedRefresh);
         request.setRequestBody(getRequestJSONBody());
         return request;
-    }
-
-    @Override
-    public String getUrl() {
-        return null;
     }
 
     @Override
@@ -106,6 +122,27 @@ public class CustomJsonApi implements BaseApi {
         return jsonObject;
     }
 
+    @Override
+    public void cancel() {
+
+    }
+
+    @Override
+    public void start() {
+        Observable.create(new Observable.OnSubscribe<Request>() {
+            @Override
+            public void call(Subscriber<? super Request> subscriber) {
+                subscriber.onNext(getRequest());
+                subscriber.onCompleted();
+            }
+        }).subscribeOn(Schedulers.io()).subscribe(new Action1<Request>() {
+            @Override
+            public void call(Request request) {
+                VolleyQueue.getInstance().addRequest(getRequest());
+            }
+        });
+    }
+
     long cacheTime = 0;
 
     boolean isNeedRefresh = false;
@@ -114,8 +151,8 @@ public class CustomJsonApi implements BaseApi {
         this.cacheTime = cacheTime;
     }
 
-    public void setIsNeedRefersh(boolean isNeedRefersh) {
-        this.isNeedRefresh = isNeedRefersh;
+    public void setIsNeedRefersh(boolean isNeedRefresh) {
+        this.isNeedRefresh = isNeedRefresh;
     }
 
     public void onError(int statusCode, String errorMessage) {

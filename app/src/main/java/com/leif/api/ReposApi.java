@@ -1,6 +1,5 @@
 package com.leif.api;
 
-import com.leif.baseapi.BaseApiParser;
 import com.leif.baseapi.CustomApi;
 import com.leif.baseapi.CustomGsonApiListParser;
 import com.leif.baseapi.ResponseListener;

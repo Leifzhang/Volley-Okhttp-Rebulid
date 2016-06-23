@@ -5,5 +5,4 @@ package com.leif.baseapi;
  */
 public class ErrorCode {
     public static int EMPTYURL = 600;
-    public static int PASERERROR = 601;
 }
