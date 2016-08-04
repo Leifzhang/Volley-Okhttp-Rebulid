@@ -6,6 +6,7 @@ import android.util.Log;
 import com.kronos.volley.AuthFailureError;
 import com.kronos.volley.Request;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -65,7 +66,6 @@ public class OkHttpStack implements HttpStack {
 
     }
 
-    @SuppressWarnings("deprecation")
     private static void setConnectionParametersForRequest(okhttp3.Request.Builder builder, Request<?> request)
             throws IOException, AuthFailureError {
         switch (request.getMethod()) {
@@ -73,10 +73,8 @@ public class OkHttpStack implements HttpStack {
                 // Ensure backwards compatibility.
                 // Volley assumes a request with a null body is a GET.
                 byte[] postBody = request.getBody();
-
                 if (postBody != null) {
-                    builder.post(RequestBody.create
-                            (MediaType.parse(request.getBodyContentType()), postBody));
+                    builder.post(createRequestBody(request));
                 }
                 break;
 
@@ -123,15 +121,20 @@ public class OkHttpStack implements HttpStack {
         byte[] body = r.getBody();
         if (body == null) body = new byte[0];
         if (TextUtils.equals("multipart/form-data", r.getBodyContentType())) {
-            return new MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)
-                    .addFormDataPart("image", System.currentTimeMillis() + ".png",
-                            RequestBody.create(MediaType.parse(r.getBodyContentType()), body))
-                    .build();
+            return createFileRequestBody(r);
         }
         return RequestBody.create(MediaType.parse(r.getBodyContentType()), body);
     }
 
+    private static RequestBody createFileRequestBody(Request r) throws AuthFailureError {
+        String fileName = new String(r.getBody());
+        File file = new File(fileName);
+        return new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("file", file.getName(),
+                        RequestBody.create(MediaType.parse(r.getBodyContentType()), new File(fileName)))
+                .build();
+    }
     private Map<String, String> mHeaders;
 
     public void addHeader(Map<String, String> header) {

@@ -156,7 +156,6 @@ public class CacheDispatcher extends Thread {
                         }
                     });
                 }
-
             } catch (Exception e) {
                 // We may have been interrupted because it was time to quit.
                 if (mQuit) {

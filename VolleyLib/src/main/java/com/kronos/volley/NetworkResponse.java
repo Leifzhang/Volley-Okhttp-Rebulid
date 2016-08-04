@@ -17,6 +17,7 @@
 package com.kronos.volley;
 
 
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.Collections;
 import java.util.Map;
@@ -87,4 +88,7 @@ public class NetworkResponse {
     public long cacheTime = 0;
 
     public boolean isCache = false;
+
+    public InputStream io;
+
 }

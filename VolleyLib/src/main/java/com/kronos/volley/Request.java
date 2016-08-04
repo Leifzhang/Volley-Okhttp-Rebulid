@@ -22,7 +22,6 @@ import android.os.SystemClock;
 import android.text.TextUtils;
 
 import com.kronos.volley.toolbox.BaseApiParser;
-import com.kronos.volley.toolbox.StringRequest;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -475,7 +474,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
      * @param response RequestResponse from the network
      * @return The parsed response, or null in the case of an error
      */
-    abstract protected RequestResponse<T> parseNetworkResponse(NetworkResponse response) throws Exception;
+    abstract protected RequestResponse<T> parseNetworkResponse(NetworkResponse response) throws ParseError;
 
     /**
      * Subclasses can override this method to parse 'networkError' and return a more specific error.

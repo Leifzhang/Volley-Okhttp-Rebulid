@@ -18,6 +18,7 @@ package com.kronos.volley.toolbox;
 
 import com.kronos.volley.AuthFailureError;
 import com.kronos.volley.NetworkResponse;
+import com.kronos.volley.ParseError;
 import com.kronos.volley.Request;
 import com.kronos.volley.RequestResponse;
 import com.kronos.volley.VolleyError;
@@ -61,7 +62,7 @@ public class StringRequest extends Request<NetResponse> {
     }
 
     @Override
-    protected RequestResponse<NetResponse> parseNetworkResponse(NetworkResponse response) throws Exception {
+    protected RequestResponse<NetResponse> parseNetworkResponse(NetworkResponse response) throws ParseError {
         NetResponse netResponse = null;
         try {
             String parsed = new String(response.data, "UTF-8");
@@ -69,7 +70,7 @@ public class StringRequest extends Request<NetResponse> {
             netResponse = new NetResponse(response.isCache, o);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new VolleyError(response);
+            throw new ParseError(response);
         }
         return RequestResponse.success(netResponse, HttpHeaderParser.parseCacheHeaders(response));
     }
