@@ -18,9 +18,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-/**
- * An {@link HttpStack HttpStack} implementation which uses OkHttp as its transport.
- */
+
 public class OkHttpStack implements HttpStack {
     private OkHttpClient client;
 

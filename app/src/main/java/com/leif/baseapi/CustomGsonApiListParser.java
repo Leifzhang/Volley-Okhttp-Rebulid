@@ -4,7 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.kronos.volley.toolbox.BaseApiParser;
 
 /**
- * Created by zhangyang on 16/4/21.
+ * Created by Leif Zhang on 16/8/4.
+ * Email leifzhanggithub@gmail.com
  */
 public class CustomGsonApiListParser implements BaseApiParser {
     private Class mClass;

@@ -3,8 +3,6 @@ package com.leif.moudle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.gson.annotations.SerializedName;
-
 /**
  * Created by zhangyang on 16/6/14.
  */
@@ -106,8 +104,7 @@ public class ReposEntity implements Parcelable {
      */
 
     private OwnerEntity owner;
-    @SerializedName("private")
-    private boolean privateX;
+
     private String html_url;
     private String description;
     private boolean fork;
@@ -208,14 +205,6 @@ public class ReposEntity implements Parcelable {
 
     public void setOwner(OwnerEntity owner) {
         this.owner = owner;
-    }
-
-    public boolean isPrivateX() {
-        return privateX;
-    }
-
-    public void setPrivateX(boolean privateX) {
-        this.privateX = privateX;
     }
 
     public String getHtml_url() {
@@ -1003,6 +992,9 @@ public class ReposEntity implements Parcelable {
         };
     }
 
+    public ReposEntity() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -1014,7 +1006,6 @@ public class ReposEntity implements Parcelable {
         dest.writeString(this.name);
         dest.writeString(this.full_name);
         dest.writeParcelable(this.owner, flags);
-        dest.writeByte(this.privateX ? (byte) 1 : (byte) 0);
         dest.writeString(this.html_url);
         dest.writeString(this.description);
         dest.writeByte(this.fork ? (byte) 1 : (byte) 0);
@@ -1080,15 +1071,11 @@ public class ReposEntity implements Parcelable {
         dest.writeParcelable(this.permissions, flags);
     }
 
-    public ReposEntity() {
-    }
-
     protected ReposEntity(Parcel in) {
         this.id = in.readInt();
         this.name = in.readString();
         this.full_name = in.readString();
         this.owner = in.readParcelable(OwnerEntity.class.getClassLoader());
-        this.privateX = in.readByte() != 0;
         this.html_url = in.readString();
         this.description = in.readString();
         this.fork = in.readByte() != 0;

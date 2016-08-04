@@ -23,14 +23,6 @@ import android.os.Process;
 
 import java.util.concurrent.BlockingQueue;
 
-/**
- * Provides a thread for performing network dispatch from a queue of requests.
- * <p/>
- * Requests added to the specified queue are processed from the network via a
- * specified {@link Network} interface. Responses are committed to cache, if
- * eligible, using a specified {@link Cache} interface. Valid responses and
- * errors are posted back to the caller via a {@link ResponseDelivery}.
- */
 public class NetworkDispatcher extends Thread {
     /**
      * The queue of requests to service.

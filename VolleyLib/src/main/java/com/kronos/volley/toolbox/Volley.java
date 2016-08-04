@@ -32,16 +32,9 @@ import okhttp3.OkHttpClient;
 
 public class Volley {
 
-    /**
-     * Default on-disk cache directory.
-     */
     private static final String DEFAULT_CACHE_DIR = "volley";
 
-    /**
-     * Creates a default instance of the worker pool and calls {@link RequestQueue#start()} on it.
-     *
-     * @return A started {@link RequestQueue} instance.
-     */
+
     public static RequestQueue newRequestQueue(Context context) {
         File cacheDir = new File(context.getCacheDir(), DEFAULT_CACHE_DIR);
 
@@ -58,7 +51,6 @@ public class Volley {
         } catch (GeneralSecurityException e) {
             throw new AssertionError(); // The system has no TLS. Just give up.
         }
-        //client.setSslSocketFactory(sslContext.getSocketFactory());
         Network network = new BasicNetwork(stack);
         RequestQueue queue = new RequestQueue(new LruDiskCache(cacheDir), network);
         queue.start();

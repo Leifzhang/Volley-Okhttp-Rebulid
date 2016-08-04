@@ -20,15 +20,7 @@ import android.os.Process;
 
 import java.util.concurrent.BlockingQueue;
 
-/**
- * Provides a thread for performing cache triage on a queue of requests.
- * <p/>
- * Requests added to the specified cache queue are resolved from cache.
- * Any deliverable response is posted back to the caller via a
- * {@link ResponseDelivery}.  Cache misses and responses that require
- * refresh are enqueued on the specified network queue for processing
- * by a {@link NetworkDispatcher}.
- */
+
 public class CacheDispatcher extends Thread {
 
     private static final boolean DEBUG = VolleyLog.DEBUG;

@@ -1,6 +1,5 @@
 package com.leif.baseapi;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -10,48 +9,35 @@ import com.kronos.volley.Request;
 import com.kronos.volley.RequestResponse;
 import com.kronos.volley.VolleyError;
 import com.kronos.volley.toolbox.BaseApiParser;
+import com.kronos.volley.toolbox.FileUploadRequest;
 import com.kronos.volley.toolbox.NetResponse;
-import com.kronos.volley.toolbox.StringRequest;
 import com.leif.baseapi.host.UrlPacker;
 
 import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
-
 /**
  * Created by Leif Zhang on 16/8/4.
  * Email leifzhanggithub@gmail.com
  */
-public abstract class CustomApi<T> implements BaseApi {
-    protected ResponseListener<T> responseListener;//
+public abstract class CustomFileApi implements BaseApi {
+    private ResponseListener responseListener;
     protected Bundle bundle;
     private String Tag = getClass().getName();
     private String realUrl;
 
-    public CustomApi(ResponseListener<T> responseListener) {
+    public CustomFileApi(ResponseListener responseListener) {
         this(responseListener, null);
     }
 
-    public CustomApi(ResponseListener<T> responseListener, Bundle bundle) {
-        this.responseListener = null != responseListener ? responseListener : new ResponseListener<T>() {
-            @Override
-            public void onSuccess(T model, boolean isCache) {
-                Log.i("getStatiscicsApi", "geturl:  " + getUrl() + "model:  " + model);
-            }
-
-            @Override
-            public void onErrorResponse(int code, String error) {
-                Log.i("getStatiscicsApi", "error:  " + error);
-            }
-        };
+    public CustomFileApi(ResponseListener responseListener, Bundle bundle) {
+        this.responseListener = responseListener;
         if (bundle == null)
             bundle = new Bundle();
         this.bundle = bundle;
@@ -69,27 +55,18 @@ public abstract class CustomApi<T> implements BaseApi {
         return realUrl;
     }
 
-
     @Override
     public Request getRequest() {
         String url = getRealUrl();
         if (TextUtils.isEmpty(url)) {
-            responseListener.onErrorResponse(ErrorCode.EMPTYURL, "url为空");
             return null;
         }
-        if (checkAddTimeTemp(url)) {
-            url += String.format("&_eva_t=%d", System.currentTimeMillis() / 1000);
-        } else {
-            if (Method() != Request.Method.GET) {
-                url += String.format("?_eva_t=%d", System.currentTimeMillis() / 1000);
-            }
-        }
-        StringRequest request = new StringRequest(url);
+        FileUploadRequest request = new FileUploadRequest(url);
         request.setRequestListener(new RequestResponse.Listener<NetResponse>() {
             @Override
             public void onResponse(NetResponse response) {
                 try {
-                    responseListener.onSuccess((T) response.data, response.isCache);
+                    responseListener.onSuccess(response.data, response.isCache);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -103,14 +80,16 @@ public abstract class CustomApi<T> implements BaseApi {
                     e.printStackTrace();
                 }
             }
-        }).setMethod(Method()).setHeader(getHeader()).setApiParser(getParser()).setCacheTime(cacheTime).setIsRefreshNeed(isNeedRefresh);
-        request.setRequestBody(getRequestBody());
+        }).setMethod(Method()).setHeader(getHeader()).setApiParser(getParser())
+                .setCacheTime(cacheTime).setIsRefreshNeed(isNeedRefresh);
+        request.setFilePath(getFileName());
         return request;
     }
 
+    public abstract String getFileName();
 
     @Override
-    public Map<String, String> getRequestBody() {
+    public final Map<String, String> getRequestBody() {
         return null;
     }
 
@@ -126,12 +105,18 @@ public abstract class CustomApi<T> implements BaseApi {
 
     @Override
     public int Method() {
-        return Request.Method.GET;
+        return Request.Method.POST;
     }
 
     @Override
     public BaseApiParser getParser() {
         return new StringApiParser();
+    }
+
+
+    @Override
+    public void cancel() {
+
     }
 
     @Override
@@ -150,39 +135,16 @@ public abstract class CustomApi<T> implements BaseApi {
         });
     }
 
-    @Override
-    public void cancel() {
-
-    }
-
-    public HashMap<String, String> getHashMapFromBundle() {
-        HashMap<String, String> map = new HashMap<>();
-        for (String key : bundle.keySet()) {
-            map.put(key, bundle.getString(key));
-        }
-        return map;
-    }
-
     long cacheTime = 0;
 
     boolean isNeedRefresh = false;
 
-    public final void setCacheTime(long cacheTime) {
+    public void setCacheTime(long cacheTime) {
         this.cacheTime = cacheTime;
     }
 
-    public final void setIsNeedRefersh(boolean isNeedRefersh) {
-        this.isNeedRefresh = isNeedRefersh;
-    }
-
-    private boolean checkAddTimeTemp(String url) {
-        if (Method() == Request.Method.GET || Method() == Request.Method.DELETE) {
-            Uri uri = Uri.parse(getUrl());
-            Set<String> para = uri.getQueryParameterNames();
-            return para.size() > 0;
-        } else {
-            return false;
-        }
+    public void setIsNeedRefersh(boolean isNeedRefresh) {
+        this.isNeedRefresh = isNeedRefresh;
     }
 
     public void onError(int statusCode, String errorMessage) {
@@ -195,5 +157,4 @@ public abstract class CustomApi<T> implements BaseApi {
             e.printStackTrace();
         }
     }
-
 }

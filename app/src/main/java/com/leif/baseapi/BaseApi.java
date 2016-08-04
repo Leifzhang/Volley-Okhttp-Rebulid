@@ -8,7 +8,8 @@ import org.json.JSONObject;
 import java.util.Map;
 
 /**
- * Created by zhangyang on 16/1/20.
+ * Created by Leif Zhang on 16/8/4.
+ * Email leifzhanggithub@gmail.com
  */
 public interface BaseApi {
     Request getRequest();

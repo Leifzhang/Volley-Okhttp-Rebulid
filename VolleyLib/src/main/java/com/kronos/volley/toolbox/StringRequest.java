@@ -36,14 +36,7 @@ public class StringRequest extends Request<NetResponse> {
         super(url);
     }
 
-    /**
-     * Creates a new request with the given method.
-     *
-     * @param method        the request {@link Method} to use
-     * @param url           URL to fetch the string at
-     * @param listener      Listener to receive the String response
-     * @param errorListener Error listener, or null to ignore errors
-     */
+
     public StringRequest(int method, String url, RequestResponse.Listener<NetResponse> listener,
                          RequestResponse.ErrorListener errorListener) {
         super(url);

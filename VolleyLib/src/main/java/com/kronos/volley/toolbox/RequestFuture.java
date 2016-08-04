@@ -26,32 +26,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-/**
- * A Future that represents a Volley request.
- *
- * Used by providing as your response and error listeners. For example:
- * <pre>
- * RequestFuture&lt;JSONObject&gt; future = RequestFuture.newFuture();
- * MyRequest request = new MyRequest(URL, future, future);
- *
- * // If you want to be able to cancel the request:
- * future.setRequest(requestQueue.add(request));
- *
- * // Otherwise:
- * requestQueue.add(request);
- *
- * try {
- *   JSONObject response = future.get();
- *   // do something with response
- * } catch (InterruptedException e) {
- *   // handle the error
- * } catch (ExecutionException e) {
- *   // handle the error
- * }
- * </pre>
- *
- * @param <T> The type of parsed response this future expects.
- */
+
 public class RequestFuture<T> implements Future<T>, RequestResponse.Listener<T>,
        RequestResponse.ErrorListener {
     private Request<?> mRequest;

@@ -26,17 +26,17 @@ import rx.schedulers.Schedulers;
 /**
  * Created by zhangyang on 16/1/27.
  */
-public abstract class CustomJsonApi implements BaseApi {
+public abstract class CustomJsonApi<T> implements BaseApi {
     private ResponseListener responseListener;
     protected Bundle bundle;
     private String Tag = getClass().getName();
     private String realUrl;
 
-    public CustomJsonApi(ResponseListener responseListener) {
+    public CustomJsonApi(ResponseListener<T> responseListener) {
         this(responseListener, null);
     }
 
-    public CustomJsonApi(ResponseListener responseListener, Bundle bundle) {
+    public CustomJsonApi(ResponseListener<T> responseListener, Bundle bundle) {
         this.responseListener = responseListener;
         if (bundle == null)
             bundle = new Bundle();

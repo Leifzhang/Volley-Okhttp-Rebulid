@@ -30,80 +30,43 @@ import java.util.Set;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * A request dispatch queue with a thread pool of dispatchers.
- * <p/>
- * Calling {@link #add(Request)} will enqueue the given Request for dispatch,
- * resolving from either cache or network on a worker thread, and then delivering
- * a parsed response on the main thread.
- */
+
 public class RequestQueue {
 
-    /**
-     * Used for generating monotonically-increasing sequence numbers for requests.
-     */
+
     private AtomicInteger mSequenceGenerator = new AtomicInteger();
 
-    /**
-     * Staging area for requests that already have a duplicate request in flight.
-     * <p/>
-     * <ul>
-     * <li>containsKey(cacheKey) indicates that there is a request in flight for the given cache
-     * key.</li>
-     * <li>get(cacheKey) returns waiting requests for the given cache key. The in flight request
-     * is <em>not</em> contained in that list. Is null if no requests are staged.</li>
-     * </ul>
-     */
+
     private final Map<String, Queue<Request<?>>> mWaitingRequests =
             new HashMap<String, Queue<Request<?>>>();
 
-    /**
-     * The set of all requests currently being processed by this RequestQueue. A Request
-     * will be in this set if it is waiting in any queue or currently being processed by
-     * any dispatcher.
-     */
+
     private final Set<Request<?>> mCurrentRequests = new HashSet<Request<?>>();
 
-    /**
-     * The cache triage queue.
-     */
+
     private final PriorityBlockingQueue<Request<?>> mCacheQueue =
             new PriorityBlockingQueue<Request<?>>();
 
-    /**
-     * The queue of requests that are actually going out to the network.
-     */
+
     private final PriorityBlockingQueue<Request<?>> mNetworkQueue =
             new PriorityBlockingQueue<Request<?>>();
 
-    /**
-     * Number of network request dispatcher threads to start.
-     */
+
     private static final int DEFAULT_NETWORK_THREAD_POOL_SIZE = 4;
 
-    /**
-     * Cache interface for retrieving and storing responses.
-     */
+
     private final Cache mCache;
 
-    /**
-     * Network interface for performing requests.
-     */
+
     private final Network mNetwork;
 
-    /**
-     * RequestResponse delivery mechanism.
-     */
+
     private final ResponseDelivery mDelivery;
 
-    /**
-     * The network dispatchers.
-     */
+
     private NetworkDispatcher[] mDispatchers;
 
-    /**
-     * The cache dispatcher.
-     */
+
     private CacheDispatcher mCacheDispatcher;
 
     /**
@@ -148,8 +111,7 @@ public class RequestQueue {
      * Starts the dispatchers in this queue.
      */
     public void start() {
-        stop();  // Make sure any currently running dispatchers are stopped.
-        // Create the cache dispatcher and start it.
+        stop();
         mCacheDispatcher = new CacheDispatcher(mCacheQueue, mNetworkQueue, mCache, mDelivery);
         mCacheDispatcher.start();
 
@@ -162,9 +124,6 @@ public class RequestQueue {
         }
     }
 
-    /**
-     * Stops the cache and network dispatchers.
-     */
     public void stop() {
         if (mCacheDispatcher != null) {
             mCacheDispatcher.quit();
@@ -176,33 +135,20 @@ public class RequestQueue {
         }
     }
 
-    /**
-     * Gets a sequence number.
-     */
     public int getSequenceNumber() {
         return mSequenceGenerator.incrementAndGet();
     }
 
-    /**
-     * Gets the {@link Cache} instance being used.
-     */
     public Cache getCache() {
         return mCache;
     }
 
-    /**
-     * A simple predicate or filter interface for Requests, for use by
-     * {@link RequestQueue#cancelAll(RequestFilter)}.
-     */
+
     public interface RequestFilter {
-        public boolean apply(Request<?> request);
+        boolean apply(Request<?> request);
     }
 
-    /**
-     * Cancels all requests in this queue for which the given filter applies.
-     *
-     * @param filter The filtering function to use
-     */
+
     public void cancelAll(RequestFilter filter) {
         synchronized (mCurrentRequests) {
             for (Request<?> request : mCurrentRequests) {
@@ -213,10 +159,7 @@ public class RequestQueue {
         }
     }
 
-    /**
-     * Cancels all requests in this queue with the given tag. Tag must be non-null
-     * and equality is by identity.
-     */
+
     public void cancelAll(final Object tag) {
         if (tag == null) {
             throw new IllegalArgumentException("Cannot cancelAll with a null tag");
@@ -245,12 +188,7 @@ public class RequestQueue {
         return mCurrentRequests.contains(request);
     }
 
-    /**
-     * Adds a Request to the dispatch queue.
-     *
-     * @param request The request to service
-     * @return The passed-in request
-     */
+
     public <T> Request<T> add(Request<T> request) {
         // Tag the request as belonging to this queue and add it to the set of current requests.
         request.setRequestQueue(this);
@@ -292,13 +230,7 @@ public class RequestQueue {
         }
     }
 
-    /**
-     * Called from {@link Request#finish(String)}, indicating that processing of the given request
-     * has finished.
-     * <p/>
-     * <p>Releases waiting requests for <code>request.getCacheKey()</code> if
-     * <code>request.shouldCache()</code>.</p>
-     */
+
     void finish(Request<?> request) {
         // Remove from the set of requests currently being processed.
         synchronized (mCurrentRequests) {
