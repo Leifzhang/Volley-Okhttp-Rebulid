@@ -403,4 +403,14 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     public BaseApiParser getApiParser() {
         return apiParser;
     }
+
+    private boolean ignoreExpired = false;
+
+    public boolean isIgnoreExpired() {
+        return ignoreExpired;
+    }
+
+    public void setIgnoreExpired(boolean ignoreExpired) {
+        this.ignoreExpired = ignoreExpired;
+    }
 }

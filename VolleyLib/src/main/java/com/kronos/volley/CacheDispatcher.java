@@ -112,7 +112,9 @@ public class CacheDispatcher extends Thread {
                     request.addMarker("cache-hit-expired");
                     request.setCacheEntry(entry);
                     mNetworkQueue.put(request);
-                    continue;
+                    if (!request.isIgnoreExpired()) {
+                        continue;
+                    }
                 }
 
                 // We have a cache hit; parse its data for delivery back to the request.
