@@ -139,7 +139,6 @@ public class NetworkDispatcher extends Thread {
                 mCache.remove(request.getCacheKey());
             } catch (Exception e) {
                 VolleyLog.e(e, "Unhandled exception %s", e.toString());
-                mCache.remove(request.getCacheKey());
                 mDelivery.postError(request, new VolleyError(e));
             }
         }
