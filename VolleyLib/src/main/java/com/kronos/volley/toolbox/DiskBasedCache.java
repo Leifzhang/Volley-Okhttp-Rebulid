@@ -223,6 +223,7 @@ public class DiskBasedCache implements Cache {
             putEntry(key, e);
             return;
         } catch (IOException e) {
+            e.printStackTrace();
         }
         boolean deleted = file.delete();
         if (!deleted) {
