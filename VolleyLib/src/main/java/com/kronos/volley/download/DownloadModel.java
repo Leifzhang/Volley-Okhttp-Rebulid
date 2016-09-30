@@ -95,4 +95,11 @@ public class DownloadModel {
         return getDownloadLength() == getTotalLength() && getTotalLength() != 0;
     }
 
+    public void setProgress(int progress) {
+        this.progress = progress;
+    }
+
+    public void setDownloadLength(long downloadLength) {
+        this.downloadLength = downloadLength;
+    }
 }

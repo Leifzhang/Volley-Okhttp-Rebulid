@@ -123,5 +123,19 @@ public class DownloadManager {
         return okHttpClient;
     }
 
+    private IDownloadDb db;
+
+    public void setDownloadDb(IDownloadDb db) {
+        if (db != null) {
+            this.db = db;
+            models = db.getFromDB();
+        }
+    }
+
+    public void save() {
+        if (db != null) {
+            db.saveToDb(models);
+        }
+    }
 
 }
