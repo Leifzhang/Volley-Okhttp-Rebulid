@@ -10,6 +10,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.kronos.volley.download.DownloadConstants;
+import com.kronos.volley.download.DownloadManager;
+import com.kronos.volley.download.DownloadModel;
 import com.leif.api.ReposApi;
 import com.leif.baseapi.ResponseListener;
 import com.leif.moudle.ReposEntity;
@@ -48,6 +51,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         api.start();
+        findViewById(R.id.download).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DownloadModel model = DownloadManager.getInstance()
+                        .getModel("http://download.apk8.com/d2/soft/meilijia.apk");
+                if (model != null && model.getState() == DownloadConstants.DOWNLOADING) {
+                    model.setState(DownloadConstants.DOWNLOAD_PAUSE);
+                } else {
+                    DownloadManager.setDownloadModel("http://download.apk8.com/d2/soft/meilijia.apk", MainActivity.this);
+                }
+            }
+        });
+        //  DownloadManager.setDownloadModel("http://download.apk8.com/d2/soft/meilijia.apk", this);
     }
 
     @Override
