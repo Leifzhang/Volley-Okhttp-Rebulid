@@ -8,11 +8,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.kronos.volley.download.DownloadConstants;
 import com.kronos.volley.download.DownloadManager;
 import com.kronos.volley.download.DownloadModel;
+import com.kronos.volley.download.adapter.IObserver;
 import com.leif.api.ReposApi;
 import com.leif.baseapi.ResponseListener;
 import com.leif.moudle.ReposEntity;
@@ -20,14 +22,16 @@ import com.leif.moudle.ReposEntity;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-
+    FloatingActionButton fab;
+    private ProgressBar progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        progressBar = (ProgressBar) findViewById(R.id.progress);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -60,6 +64,12 @@ public class MainActivity extends AppCompatActivity {
                     model.setState(DownloadConstants.DOWNLOAD_PAUSE);
                 } else {
                     DownloadManager.setDownloadModel("http://download.apk8.com/d2/soft/meilijia.apk", MainActivity.this);
+                    model.registerDataSetObserver(new IObserver() {
+                        @Override
+                        public void onChanged() {
+                            progressBar.setProgress(model.getProgress());
+                        }
+                    });
                 }
             }
         });
@@ -93,4 +103,6 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         DownloadManager.getInstance().save();
     }
+
+
 }

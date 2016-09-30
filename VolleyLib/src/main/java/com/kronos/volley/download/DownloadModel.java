@@ -1,7 +1,12 @@
 package com.kronos.volley.download;
 
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.text.TextUtils;
+
+import com.kronos.volley.download.adapter.BaseObserveAdapter;
 
 import java.io.File;
 import java.util.regex.Matcher;
@@ -11,14 +16,25 @@ import java.util.regex.Pattern;
  * Created by Leif Zhang on 16/9/29.
  * Email leifzhanggithub@gmail.com
  */
-public class DownloadModel {
-    private String downloadUrl = "http://download.apk8.com/d2/soft/meilijia.apk";
+public class DownloadModel extends BaseObserveAdapter {
+    private String downloadUrl = "";
     private String downloadFolder = Environment.getExternalStorageDirectory().getPath() + "/wallstreetcn/";
     private String sdFile;
     private int progress;
     private int state;
     private long totalLength;
     private long downloadLength = 0;
+    private Handler handler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                case 10:
+                    notifyDataChange();
+                    break;
+            }
+            return true;
+        }
+    });
 
     public String getSdCardFile() {
         if (TextUtils.isEmpty(sdFile)) {
@@ -32,6 +48,7 @@ public class DownloadModel {
         int curProgress = Math.round(downloadLength * 100f / totalLength);
         if (curProgress != progress) {
             progress = curProgress;
+            handler.sendEmptyMessage(10);
         }
     }
 

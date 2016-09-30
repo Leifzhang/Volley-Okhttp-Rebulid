@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.leif.example.MainActivity"
     tools:showIn="@layout/activity_main">
@@ -18,4 +19,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="download" />
+
+    <ProgressBar
+        android:id="@+id/progress"
+        style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:max="100" />
 </LinearLayout>
