@@ -43,6 +43,10 @@ public class DownloadModel extends BaseObserveAdapter {
         return sdFile;
     }
 
+    public void setDownloadFolder(String downloadFolder) {
+        this.downloadFolder = downloadFolder;
+    }
+
     public void addDownloadLength(int length) {
         this.downloadLength += length;
         int curProgress = Math.round(downloadLength * 100f / totalLength);

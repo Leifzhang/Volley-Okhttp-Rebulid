@@ -10,13 +10,13 @@ sample中有简单的网络库封装逻辑.同时数据解析器会放在线程�
 Add this line to your `build.gradle` file under your module directory. 
 
 ```
-compile 'com.github.leifzhang:VolleyLib:0.2.3'
+compile 'com.github.leifzhang:VolleyLib:0.2.4'
 
-compile 'com.github.leifzhang:DownloadLib:0.2.3'
+compile 'com.github.leifzhang:DownloadLib:0.2.4'
 ```
 
 ## How to use it
-###Step 1
+
 ```java
     StringRequest request = new StringRequest(url);
     request.setRequestListener(new RequestResponse.Listener<NetResponse>() {
@@ -33,16 +33,22 @@ compile 'com.github.leifzhang:DownloadLib:0.2.3'
         .setCacheTime(cacheTime).setIsRefreshNeed(isNeedRefresh);
         request.setRequestBody(getRequestBody());
 ```
+###Step 1
+配置默认文件 '必须设置'
+
+```java
+        DownloadConfig downloadConfig = new DownloadConfig.Builder().setDownloadDb(new DataBase()).builder();
+        DownloadManager.getInstance().setConfig(downloadConfig);
+```
 
 ###Step 2
-
-    下载文件只要使用这个就会自动开启
+下载文件只要使用这个就会自动开启
     
 ```java
    DownloadManager.setDownloadModel(downloadUrl, context); 
 ```
 
-    暂停只需要改变model状态就能完成
+暂停只需要改变model状态就能完成
     
 ```java
    DownloadModel model = DownloadManager.getInstance()

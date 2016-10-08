@@ -3,6 +3,7 @@ package com.leif.example;
 import android.app.Application;
 import android.content.Context;
 
+import com.kronos.download.DownloadConfig;
 import com.kronos.download.DownloadManager;
 
 import io.realm.Realm;
@@ -22,7 +23,8 @@ public class AppContext extends Application {
                 .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(config);
-        DownloadManager.getInstance().setDownloadDb(new DataBase());
+        DownloadConfig downloadConfig = new DownloadConfig.Builder().setDownloadDb(new DataBase()).builder();
+        DownloadManager.getInstance().setConfig(downloadConfig);
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.kronos.download;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Environment;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -20,29 +19,30 @@ import okhttp3.Response;
  * Email leifzhanggithub@gmail.com
  */
 public class DownloadManager {
-    private String downloadFolder = Environment.getExternalStorageDirectory().getPath() + "/wallstreetcn/";// SD卡路径;
     private static DownloadManager ourInstance = new DownloadManager();
     private HashMap<String, DownloadModel> models;
-
+    private DownloadConfig config;
     public static DownloadManager getInstance() {
         return ourInstance;
     }
 
-    private OkHttpClient okHttpClient;
 
     private DownloadManager() {
         models = new HashMap<>();
     }
 
-    public void setOkHttpClient(OkHttpClient okHttpClient) {
-        this.okHttpClient = okHttpClient;
+    public void setConfig(DownloadConfig downloadConfig) {
+        this.config = downloadConfig;
+        models = config.getDownloadDb().getFromDB();
     }
 
     public static void setDownloadModel(String url, Context context) {
+        getInstance().isReady();
         DownloadModel downloadModel = getInstance().getModel(url);
         if (downloadModel == null) {
             downloadModel = new DownloadModel();
             downloadModel.setDownloadUrl(url);
+            downloadModel.setDownloadFolder(getInstance().config.getDownloadFolder());
             getInstance().putModel(url, downloadModel);
         }
         Intent intent = new Intent(context, DownloadService.class);
@@ -50,6 +50,11 @@ public class DownloadManager {
         context.startService(intent);
     }
 
+    private void isReady() {
+        if (config == null) {
+            throw new NullPointerException();
+        }
+    }
     private void putModel(String url, DownloadModel model) {
         models.put(url, model);
     }
@@ -124,26 +129,12 @@ public class DownloadManager {
 
 
     private OkHttpClient getOkHttpClient() {
-        if (okHttpClient == null) {
-            okHttpClient = new OkHttpClient.Builder()
-                    .build();
-        }
-        return okHttpClient;
+        return config.getOkHttpClient();
     }
 
-    private IDownloadDb db;
-
-    public void setDownloadDb(IDownloadDb db) {
-        if (db != null) {
-            this.db = db;
-            models = db.getFromDB();
-        }
-    }
 
     public void save() {
-        if (db != null) {
-            db.saveToDb(models);
-        }
+        config.getDownloadDb().saveToDb(models);
     }
 
 }
