@@ -1,13 +1,11 @@
-package com.kronos.volley.download;
+package com.kronos.download;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Environment;
-import android.util.Log;
-
-import com.kronos.volley.toolbox.FileUtils;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -71,7 +69,14 @@ public class DownloadManager {
             return;
         }
         if (downloadModel.check()) {
+            downloadModel.setState(DownloadConstants.DOWNLOAD_FINISH);
             return;
+        }
+        if (downloadModel.getDownloadLength() > downloadModel.getTotalLength()) {
+            File file = new File(downloadModel.getSdCardFile());
+            file.delete();
+            downloadModel.setProgress(0);
+            downloadModel.setTotalLength(0);
         }
         String range = "bytes=" + downloadModel.getDownloadLength() + "-";
         final Request request = new Request.Builder().url(downloadModel.getDownloadUrl())
@@ -81,7 +86,7 @@ public class DownloadManager {
                 new ProgressResponseBody.ProgressListener() {
                     @Override
                     public void update(long bytesRead, long contentLength, boolean done) {
-                        Log.i("DownloadManager", "DownloadManager:" + downloadModel.getProgress());
+                        //Log.i("DownloadManager", "DownloadManager:" + downloadModel.getProgress());
                     }
                 });
         downloadModel.setState(DownloadConstants.DOWNLOADING);
@@ -89,10 +94,13 @@ public class DownloadManager {
             downloadModel.setTotalLength(responseBody.contentLength());
         }
         writeFile(downloadModel, responseBody.byteStream());
+        if (downloadModel.getDownloadLength() == downloadModel.getTotalLength()) {
+            downloadModel.setState(DownloadConstants.DOWNLOAD_FINISH);
+        }
     }
 
     private void writeFile(DownloadModel model, InputStream input) throws IOException {
-        String destFilePath = downloadFolder + model.getDownloadUrl().hashCode() + ".apk";
+        String destFilePath = model.getSdCardFile();
         if (!FileUtils.createFile(destFilePath)) {
             return;
         }

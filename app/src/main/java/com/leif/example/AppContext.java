@@ -3,7 +3,7 @@ package com.leif.example;
 import android.app.Application;
 import android.content.Context;
 
-import com.kronos.volley.download.DownloadManager;
+import com.kronos.download.DownloadManager;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;

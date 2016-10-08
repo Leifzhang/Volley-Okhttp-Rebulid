@@ -1,7 +1,8 @@
 package com.leif.example;
 
-import com.kronos.volley.download.DownloadModel;
-import com.kronos.volley.download.IDownloadDb;
+
+import com.kronos.download.DownloadModel;
+import com.kronos.download.IDownloadDb;
 
 import java.util.HashMap;
 

@@ -1,4 +1,4 @@
-package com.kronos.volley.download.adapter;
+package com.kronos.download.adapter;
 
 import android.database.Observable;
 

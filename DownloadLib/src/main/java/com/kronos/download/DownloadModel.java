@@ -1,4 +1,4 @@
-package com.kronos.volley.download;
+package com.kronos.download;
 
 import android.os.Environment;
 import android.os.Handler;
@@ -6,7 +6,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 
-import com.kronos.volley.download.adapter.BaseObserveAdapter;
+import com.kronos.download.adapter.BaseObserveAdapter;
 
 import java.io.File;
 import java.util.regex.Matcher;

@@ -1,4 +1,4 @@
-package com.kronos.volley.download.adapter;
+package com.kronos.download.adapter;
 
 /**
  * Created by Leif Zhang on 16/8/18.

@@ -1,4 +1,4 @@
-package com.kronos.volley.download;
+package com.kronos.download;
 
 import android.app.IntentService;
 import android.content.Intent;

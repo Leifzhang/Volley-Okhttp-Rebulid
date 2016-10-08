@@ -4,17 +4,15 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.kronos.volley.download.DownloadConstants;
-import com.kronos.volley.download.DownloadManager;
-import com.kronos.volley.download.DownloadModel;
-import com.kronos.volley.download.adapter.IObserver;
+import com.kronos.download.DownloadManager;
 import com.leif.api.ReposApi;
 import com.leif.baseapi.ResponseListener;
 import com.leif.moudle.ReposEntity;
@@ -23,7 +21,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     FloatingActionButton fab;
-    private ProgressBar progressBar;
+    private RecyclerView recyclerView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
-        progressBar = (ProgressBar) findViewById(R.id.progress);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -39,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
         ReposApi api = new ReposApi(new ResponseListener<List<ReposEntity>>() {
             private int i;
 
@@ -55,6 +53,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         api.start();
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(new ItemAdapter());
+      /*  progressBar = (ProgressBar) findViewById(R.id.progress);
         findViewById(R.id.download).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                     });
                 }
             }
-        });
+        });*/
         //  DownloadManager.setDownloadModel("http://download.apk8.com/d2/soft/meilijia.apk", this);
     }
 
