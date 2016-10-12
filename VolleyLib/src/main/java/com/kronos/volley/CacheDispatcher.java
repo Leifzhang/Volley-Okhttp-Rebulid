@@ -155,6 +155,11 @@ public class CacheDispatcher extends Thread {
                 if (mQuit) {
                     return;
                 }
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
                 continue;
             }
         }
