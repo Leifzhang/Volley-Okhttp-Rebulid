@@ -18,7 +18,6 @@ package com.kronos.volley.toolbox;
 
 import android.os.SystemClock;
 
-import com.kronos.volley.AuthFailureError;
 import com.kronos.volley.Cache;
 import com.kronos.volley.Network;
 import com.kronos.volley.NetworkError;
@@ -118,14 +117,13 @@ public class BasicNetwork implements Network {
                 if (responseContents != null) {
                     networkResponse = new NetworkResponse(statusCode, responseContents,
                             responseHeaders, false);
-                    if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED ||
+/*                    if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED ||
                             statusCode == HttpURLConnection.HTTP_FORBIDDEN) {
                         attemptRetryOnException("auth",
                                 request, new AuthFailureError(networkResponse));
-                    } else {
-                        // TODO: Only throw ServerError for 5xx status codes.
+                    } else {*/
                         throw new ServerError(networkResponse);
-                    }
+                    // }
                 } else {
                     throw new NetworkError(networkResponse);
                 }
