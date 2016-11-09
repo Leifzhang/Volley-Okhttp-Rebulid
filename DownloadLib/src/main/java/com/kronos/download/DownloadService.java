@@ -19,13 +19,16 @@ public class DownloadService extends IntentService {
         try {
             String url = intent.getStringExtra("url");
             DownloadManager.getInstance().startRequest(url);
+            DownloadManager.getInstance().save();
         } catch (IOException e) {
             e.printStackTrace();
+            DownloadManager.getInstance().save();
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        DownloadManager.getInstance().save();
     }
 }
