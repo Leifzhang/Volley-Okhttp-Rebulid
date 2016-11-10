@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -37,10 +38,15 @@ public class DownloadManager {
     }
 
     public static void setDownloadModel(String url, Context context) {
+        setDownloadModel(url, context, null);
+    }
+
+    public static void setDownloadModel(String url, Context context, String fileName) {
         getInstance().isReady();
         DownloadModel downloadModel = getInstance().getModel(url);
         if (downloadModel == null) {
             downloadModel = new DownloadModel();
+            downloadModel.setFileName(fileName);
             downloadModel.setDownloadUrl(url);
             downloadModel.setDownloadFolder(getInstance().config.getDownloadFolder());
             getInstance().putModel(url, downloadModel);
@@ -50,13 +56,45 @@ public class DownloadManager {
         context.startService(intent);
     }
 
+
     private void isReady() {
         if (config == null) {
             throw new NullPointerException();
         }
     }
+
+    public void pauseAll() {
+        for (Map.Entry<String, DownloadModel> entry : models.entrySet()) {
+            entry.getValue().setState(DownloadConstants.DOWNLOAD_PAUSE);
+        }
+    }
+
+    public void pause(String url) {
+        if (models.containsKey(url)) {
+            models.get(url).setState(DownloadConstants.DOWNLOAD_PAUSE);
+        }
+    }
+
+    public void startAll(Context context) {
+        for (Map.Entry<String, DownloadModel> entry : models.entrySet()) {
+            entry.getValue().setState(DownloadConstants.DOWNLOADING);
+            Intent intent = new Intent(context, DownloadService.class);
+            intent.putExtra("url", entry.getKey());
+            context.startService(intent);
+        }
+    }
+
+    public void start(Context context, String url) {
+        if (models.containsKey(url)) {
+            Intent intent = new Intent(context, DownloadService.class);
+            intent.putExtra("url", url);
+            context.startService(intent);
+        }
+    }
+
     private void putModel(String url, DownloadModel model) {
         models.put(url, model);
+        save();
     }
 
     public DownloadModel getModel(String url) {
@@ -94,7 +132,9 @@ public class DownloadManager {
                         //Log.i("DownloadManager", "DownloadManager:" + downloadModel.getProgress());
                     }
                 });
-        downloadModel.setState(DownloadConstants.DOWNLOADING);
+        if (downloadModel.getState() == 0) {
+            downloadModel.setState(DownloadConstants.DOWNLOADING);
+        }
         if (downloadModel.getTotalLength() == 0) {
             downloadModel.setTotalLength(responseBody.contentLength());
         }

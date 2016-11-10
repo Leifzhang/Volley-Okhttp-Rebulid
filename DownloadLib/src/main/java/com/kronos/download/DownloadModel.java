@@ -20,10 +20,12 @@ public class DownloadModel extends BaseObserveAdapter {
     private String downloadUrl = "";
     private String downloadFolder = Environment.getExternalStorageDirectory().getPath() + "/wallstreetcn/";
     private String sdFile;
+    private String fileName;
     private int progress;
     private int state;
     private long totalLength;
     private long downloadLength = 0;
+
     private Handler handler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -35,6 +37,14 @@ public class DownloadModel extends BaseObserveAdapter {
             return true;
         }
     });
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
 
     public String getSdCardFile() {
         if (TextUtils.isEmpty(sdFile)) {
@@ -102,11 +112,12 @@ public class DownloadModel extends BaseObserveAdapter {
         String suffix = "";
         while (mc.find()) {
             suffix = mc.group();//截取文件名后缀名
-
         }
         if (!TextUtils.isEmpty(suffix)) {
+            fileName = suffix.substring(0, suffix.indexOf("."));
             suffix = suffix.substring(suffix.indexOf("."), suffix.length());
         } else {
+            fileName = TextUtils.isEmpty(fileName) ? "未知文件" : fileName;
             suffix = ".temp";
         }
         return suffix;
