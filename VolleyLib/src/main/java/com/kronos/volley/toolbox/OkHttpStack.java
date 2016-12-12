@@ -64,7 +64,7 @@ public class OkHttpStack implements HttpStack {
 
     }
 
-    private static void setConnectionParametersForRequest(okhttp3.Request.Builder builder, Request<?> request)
+    protected void setConnectionParametersForRequest(okhttp3.Request.Builder builder, Request<?> request)
             throws IOException, AuthFailureError {
         switch (request.getMethod()) {
             case Request.Method.DEPRECATED_GET_OR_POST:
@@ -115,7 +115,7 @@ public class OkHttpStack implements HttpStack {
     }
 
 
-    private static RequestBody createRequestBody(Request r) throws AuthFailureError {
+    private RequestBody createRequestBody(Request r) throws AuthFailureError {
         byte[] body = r.getBody();
         if (body == null) body = new byte[0];
         if (TextUtils.equals("multipart/form-data", r.getBodyContentType())) {
@@ -124,7 +124,7 @@ public class OkHttpStack implements HttpStack {
         return RequestBody.create(MediaType.parse(r.getBodyContentType()), body);
     }
 
-    private static RequestBody createFileRequestBody(Request r) throws AuthFailureError {
+    private RequestBody createFileRequestBody(Request r) throws AuthFailureError {
         String fileName = new String(r.getBody());
         File file = new File(fileName);
         return new MultipartBody.Builder()
@@ -136,7 +136,8 @@ public class OkHttpStack implements HttpStack {
     private Map<String, String> mHeaders;
 
     public void addHeader(Map<String, String> header) {
-        if (header != null)
+        if (header != null) {
             mHeaders.putAll(header);
+        }
     }
 }

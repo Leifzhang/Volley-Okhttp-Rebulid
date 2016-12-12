@@ -9,6 +9,8 @@ import android.text.TextUtils;
 import com.kronos.download.adapter.BaseObserveAdapter;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -77,7 +79,7 @@ public class DownloadModel extends BaseObserveAdapter {
     public long getDownloadLength() {
         try {
             File file = new File(getSdCardFile());
-            downloadLength = file.length();
+            downloadLength = !file.exists() ? 0 : file.length();
             return downloadLength;
         } catch (Exception e) {
             e.printStackTrace();
@@ -106,6 +108,11 @@ public class DownloadModel extends BaseObserveAdapter {
     }
 
     private String getSuffix(String url) {
+        try {
+            url = URLDecoder.decode(url, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         String suffixes = "avi|mpeg|3gp|mp3|mp4|wav|jpeg|gif|jpg|png|apk|exe|txt|html|zip|java|doc";
         Pattern pat = Pattern.compile("[\\w]+[\\.](" + suffixes + ")");//正则判断
         Matcher mc = pat.matcher(url);//条件匹配
@@ -114,7 +121,7 @@ public class DownloadModel extends BaseObserveAdapter {
             suffix = mc.group();//截取文件名后缀名
         }
         if (!TextUtils.isEmpty(suffix)) {
-            fileName = suffix.substring(0, suffix.indexOf("."));
+            fileName = TextUtils.isEmpty(fileName) ? suffix.substring(0, suffix.indexOf(".")) : fileName;
             suffix = suffix.substring(suffix.indexOf("."), suffix.length());
         } else {
             fileName = TextUtils.isEmpty(fileName) ? "未知文件" : fileName;
