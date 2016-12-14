@@ -32,4 +32,14 @@ public class FileUploadRequest extends StringRequest {
     public String getBodyContentType() {
         return "multipart/form-data";
     }
+
+    private String mediaType = "image/png";
+
+    public String getMediaType() {
+        return mediaType;
+    }
+
+    public void setMediaType(String mediaType) {
+        this.mediaType = mediaType;
+    }
 }

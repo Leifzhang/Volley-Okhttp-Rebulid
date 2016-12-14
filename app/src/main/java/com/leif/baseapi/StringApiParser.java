@@ -1,5 +1,6 @@
 package com.leif.baseapi;
 
+import com.kronos.volley.ParseError;
 import com.kronos.volley.toolbox.BaseApiParser;
 
 /**
@@ -7,7 +8,7 @@ import com.kronos.volley.toolbox.BaseApiParser;
  */
 public class StringApiParser implements BaseApiParser {
     @Override
-    public Object parse(String content) throws Exception {
+    public Object parse(String content) throws ParseError {
         return content;
     }
 }

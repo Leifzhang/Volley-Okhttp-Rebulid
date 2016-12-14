@@ -345,9 +345,6 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     public int compareTo(Request<T> other) {
         Priority left = this.getPriority();
         Priority right = other.getPriority();
-
-        // High-priority requests are "lesser" so they are sorted to the front.
-        // Equal priorities are sorted by sequence number to provide FIFO ordering.
         return left == right ?
                 this.mSequence - other.mSequence :
                 right.ordinal() - left.ordinal();

@@ -1,6 +1,7 @@
 package com.leif.baseapi;
 
 import com.alibaba.fastjson.JSON;
+import com.kronos.volley.ParseError;
 import com.kronos.volley.toolbox.BaseApiParser;
 
 /**
@@ -14,7 +15,7 @@ public class GsonApiParser implements BaseApiParser {
     }
 
     @Override
-    public Object parse(String content) throws Exception {
+    public Object parse(String content) throws ParseError {
         return JSON.parseObject(content, mClass);
     }
 }

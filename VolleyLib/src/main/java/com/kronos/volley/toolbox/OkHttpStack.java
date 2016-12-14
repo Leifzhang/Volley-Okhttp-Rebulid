@@ -1,10 +1,9 @@
 package com.kronos.volley.toolbox;
 
-import android.text.TextUtils;
 import android.util.Log;
 
-import com.kronos.volley.AuthFailureError;
 import com.kronos.volley.Request;
+import com.kronos.volley.VolleyError;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +39,7 @@ public class OkHttpStack implements HttpStack {
 
     @Override
     public Response performRequest(Request<?> request, Map<String, String> additionalHeaders)
-            throws IOException, AuthFailureError {
+            throws IOException, VolleyError {
         OkHttpClient client = getClient();
         okhttp3.Request.Builder okHttpRequestBuilder =
                 new okhttp3.Request.Builder();
@@ -65,11 +64,9 @@ public class OkHttpStack implements HttpStack {
     }
 
     protected void setConnectionParametersForRequest(okhttp3.Request.Builder builder, Request<?> request)
-            throws IOException, AuthFailureError {
+            throws IOException, VolleyError {
         switch (request.getMethod()) {
             case Request.Method.DEPRECATED_GET_OR_POST:
-                // Ensure backwards compatibility.
-                // Volley assumes a request with a null body is a GET.
                 byte[] postBody = request.getBody();
                 if (postBody != null) {
                     builder.post(createRequestBody(request));
@@ -114,25 +111,25 @@ public class OkHttpStack implements HttpStack {
         }
     }
 
-
-    private RequestBody createRequestBody(Request r) throws AuthFailureError {
+    protected RequestBody createRequestBody(Request r) throws VolleyError {
         byte[] body = r.getBody();
         if (body == null) body = new byte[0];
-        if (TextUtils.equals("multipart/form-data", r.getBodyContentType())) {
-            return createFileRequestBody(r);
+        if (r instanceof FileUploadRequest) {
+            return createFileRequestBody((FileUploadRequest) r);
         }
         return RequestBody.create(MediaType.parse(r.getBodyContentType()), body);
     }
 
-    private RequestBody createFileRequestBody(Request r) throws AuthFailureError {
+    protected RequestBody createFileRequestBody(FileUploadRequest r) throws VolleyError {
         String fileName = new String(r.getBody());
         File file = new File(fileName);
         return new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("file", file.getName(),
-                        RequestBody.create(MediaType.parse(r.getBodyContentType()), new File(fileName)))
+                        RequestBody.create(MediaType.parse(r.getMediaType()), new File(fileName)))
                 .build();
     }
+
     private Map<String, String> mHeaders;
 
     public void addHeader(Map<String, String> header) {

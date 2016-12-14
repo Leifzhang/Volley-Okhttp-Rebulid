@@ -17,8 +17,8 @@
 package com.kronos.volley.toolbox;
 
 
-import com.kronos.volley.AuthFailureError;
 import com.kronos.volley.Request;
+import com.kronos.volley.VolleyError;
 
 import java.io.IOException;
 import java.util.Map;
@@ -31,7 +31,7 @@ import okhttp3.Response;
 public interface HttpStack {
 
     Response performRequest(Request<?> request, Map<String, String> additionalHeaders)
-            throws IOException, AuthFailureError;
+            throws IOException, VolleyError;
 
     void addHeader(Map<String, String> header);
 }

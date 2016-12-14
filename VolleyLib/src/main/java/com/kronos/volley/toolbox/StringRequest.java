@@ -23,6 +23,7 @@ import com.kronos.volley.Request;
 import com.kronos.volley.RequestResponse;
 import com.kronos.volley.VolleyError;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 /**
@@ -57,14 +58,14 @@ public class StringRequest extends Request<NetResponse> {
     @Override
     protected RequestResponse<NetResponse> parseNetworkResponse(NetworkResponse response) throws ParseError {
         NetResponse netResponse = null;
+        String parsed = null;
         try {
-            String parsed = new String(response.data, "UTF-8");
-            Object o = getApiParser().parse(parsed);
-            netResponse = new NetResponse(response.isCache, o);
-        } catch (Exception e) {
+            parsed = new String(response.data, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            throw new ParseError(response);
         }
+        Object o = getApiParser().parse(parsed);
+        netResponse = new NetResponse(response.isCache, o);
         return RequestResponse.success(netResponse, HttpHeaderParser.parseCacheHeaders(response));
     }
 
