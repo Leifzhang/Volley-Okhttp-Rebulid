@@ -24,4 +24,9 @@ public class BaseObserveAdapter implements IModelObservable {
         mDataSetObservable.notifyChanged();
     }
 
+    @Override
+    public void unregisterAll() {
+        mDataSetObservable.unregisterAll();
+    }
+
 }

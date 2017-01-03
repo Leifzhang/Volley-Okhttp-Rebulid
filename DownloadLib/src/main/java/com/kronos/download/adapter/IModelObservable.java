@@ -10,4 +10,6 @@ public interface IModelObservable {
     void unregisterDataSetObserver(IObserver observer);
 
     void notifyDataChange();
+
+    void unregisterAll();
 }
