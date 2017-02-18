@@ -6,13 +6,15 @@ sample中有简单的网络库封装逻辑.同时数据解析器会放在线程�
 
 同时拓展了大文件下载,支持断点续传以及暂停,暂时只支持一个个文件队列下载, 同时使用了intent-service,下载完成后会自动关闭service.
 
+同时修复了http 请求返回eTag 304 无法使用的bug。
+
 ## Usage
 Add this line to your `build.gradle` file under your module directory. 
 
 ```
-compile 'com.github.leifzhang:VolleyLib:0.3.9'
+compile 'com.github.leifzhang:VolleyLib:0.4.0'
 
-compile 'com.github.leifzhang:DownloadLib:0.3.9'
+compile 'com.github.leifzhang:DownloadLib:0.4.0'
 ```
 
 ## How to use it

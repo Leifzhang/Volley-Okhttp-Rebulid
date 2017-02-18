@@ -35,8 +35,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import okhttp3.Headers;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
@@ -75,18 +77,19 @@ public class BasicNetwork implements Network {
         while (true) {
             Response httpResponse = null;
             byte[] responseContents = null;
-            Map<String, String> responseHeaders = request.getHeaders();
+            Map<String, String> requestHeader = request.getHeaders();
             try {
                 // Gather headers.
                 Map<String, String> headers = new HashMap<String, String>();
                 addCacheHeaders(headers, request.getCacheEntry());
                 httpResponse = mHttpStack.performRequest(request, headers);
                 int statusCode = httpResponse.code();
+                Map<String, String> responseHeader = getResponseHeader(httpResponse);
                 // Handle cache validation.
                 if (httpResponse.code() == HttpURLConnection.HTTP_NOT_MODIFIED) {
                     return new NetworkResponse(HttpURLConnection.HTTP_NOT_MODIFIED,
                             request.getCacheEntry() == null ? null : request.getCacheEntry().data,
-                            responseHeaders, true);
+                            responseHeader, true);
                 }
                 // Some responses such as 204s do not have content.  We must check.
                 if (httpResponse.body() != null) {
@@ -100,7 +103,7 @@ public class BasicNetwork implements Network {
                 if (statusCode < 200 || statusCode > 299) {
                     throw new IOException();
                 }
-                return new NetworkResponse(statusCode, responseContents, responseHeaders, false);
+                return new NetworkResponse(statusCode, responseContents, responseHeader, false);
             } catch (SocketTimeoutException e) {
                 attemptRetryOnException("socket", request, new TimeoutError());
             } catch (MalformedURLException e) {
@@ -116,7 +119,7 @@ public class BasicNetwork implements Network {
                 VolleyLog.e("Unexpected response code %d for %s", statusCode, request.getUrl());
                 if (responseContents != null) {
                     networkResponse = new NetworkResponse(statusCode, responseContents,
-                            responseHeaders, false);
+                            requestHeader, false);
 /*                    if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED ||
                             statusCode == HttpURLConnection.HTTP_FORBIDDEN) {
                         attemptRetryOnException("auth",
@@ -156,6 +159,18 @@ public class BasicNetwork implements Network {
             throw e;
         }
         request.addMarker(String.format("%s-retry [timeout=%s]", logPrefix, oldTimeout));
+    }
+
+
+    private Map<String, String> getResponseHeader(Response response) {
+        Headers headers = response.headers();
+        Map<String, String> responseHeader = new HashMap<>();
+        for (String key : headers.names()) {
+            List<String> values = headers.values(key);
+            String value = values.size() > 0 ? values.get(0) : "";
+            responseHeader.put(key, value);
+        }
+        return responseHeader;
     }
 
     private void addCacheHeaders(Map<String, String> headers, Cache.Entry entry) {

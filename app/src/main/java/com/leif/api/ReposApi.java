@@ -13,6 +13,7 @@ public class ReposApi extends CustomApi {
     public ReposApi(ResponseListener responseListener) {
         super(responseListener);
         setCacheTime(10 * 60 * 1000);
+        setIsNeedRefersh(true);
     }
 
     @Override
