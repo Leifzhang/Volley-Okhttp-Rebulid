@@ -121,6 +121,7 @@ public class NetworkDispatcher extends Thread {
                 // we're done -- don't deliver a second identical requestResponse.
                 if (networkResponse.notModified && request.hasHadResponseDelivered()) {
                     request.finish("not-modified");
+                    mCache.update(request.getCacheKey(), request.getCacheTime());
                     continue;
                 }
 

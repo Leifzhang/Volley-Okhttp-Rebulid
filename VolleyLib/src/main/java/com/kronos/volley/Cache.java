@@ -54,6 +54,13 @@ public interface Cache {
     void invalidate(String key, boolean fullExpire);
 
     /**
+     * NotModify update cacheTime.
+     *
+     * @param key       Cache key
+     * @param cacheTime update cacheTime
+     */
+    void update(String key, long cacheTime);
+    /**
      * Removes an entry from the cache.
      * @param key Cache key
      */

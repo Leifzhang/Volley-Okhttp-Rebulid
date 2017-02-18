@@ -207,6 +207,16 @@ public class DiskBasedCache implements Cache {
 
     }
 
+    @Override
+    public void update(String key, long cacheTime) {
+        Entry entry = get(key);
+        if (entry != null) {
+            entry.softTtl = System.currentTimeMillis() + cacheTime;
+            entry.ttl = entry.softTtl;
+            put(key, entry);
+        }
+    }
+
     /**
      * Puts the entry with the specified key into the cache.
      */

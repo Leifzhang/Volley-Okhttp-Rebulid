@@ -168,7 +168,7 @@ public class BasicNetwork implements Network {
         for (String key : headers.names()) {
             List<String> values = headers.values(key);
             String value = values.size() > 0 ? values.get(0) : "";
-            responseHeader.put(key, value);
+            responseHeader.put(key.toLowerCase(), value);
         }
         return responseHeader;
     }

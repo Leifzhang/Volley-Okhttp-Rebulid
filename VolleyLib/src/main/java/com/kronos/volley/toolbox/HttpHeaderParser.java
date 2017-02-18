@@ -48,7 +48,7 @@ public class HttpHeaderParser {
         String headerValue;
 
 
-        headerValue = headers.get("Cache-Control");
+        headerValue = headers.get("Cache-Control".toLowerCase());
         if (headerValue != null) {
             hasCacheControl = true;
             String[] tokens = headerValue.split(",");
@@ -59,13 +59,15 @@ public class HttpHeaderParser {
                         maxAge = Long.parseLong(token.substring(8));
                     } catch (Exception e) {
                     }
-                } else if (token.equals("must-revalidate") || token.equals("proxy-revalidate")) {
+                } else if (token.equals("must-revalidate".toLowerCase()) ||
+                        token.equals("proxy-revalidate".toLowerCase())) {
                     maxAge = 0;
                 }
             }
         }
+        String ETag = "ETag".toLowerCase();
 
-        serverEtag = headers.get("ETag");
+        serverEtag = headers.get(ETag);
 
         // Cache-Control takes precedence over an Expires header, even if both exist and Expires
         // is more restrictive.
