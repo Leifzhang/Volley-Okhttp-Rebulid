@@ -379,7 +379,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     private long cacheTime = 0;
 
     public Request<T> setCacheTime(long cacheTime) {
-        if (cacheTime >= 0) {
+        if (cacheTime > 0) {
             this.cacheTime = cacheTime;
             setShouldCache(true);
         }
