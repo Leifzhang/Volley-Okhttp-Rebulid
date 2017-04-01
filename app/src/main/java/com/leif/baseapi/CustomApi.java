@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 
+import com.kronos.rxadapter.RxVolleyAdapter;
 import com.kronos.volley.Request;
 import com.kronos.volley.RequestResponse;
 import com.kronos.volley.VolleyError;
@@ -20,10 +21,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import rx.Observable;
-import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 
 /**
@@ -77,24 +76,8 @@ public abstract class CustomApi<T> implements BaseApi {
             responseListener.onErrorResponse(ErrorCode.EMPTYURL, "url为空");
             return null;
         }
-        if (checkAddTimeTemp(url)) {
-            url += String.format("&_eva_t=%d", System.currentTimeMillis() / 1000);
-        } else {
-            if (Method() != Request.Method.GET) {
-                url += String.format("?_eva_t=%d", System.currentTimeMillis() / 1000);
-            }
-        }
         StringRequest request = new StringRequest(url);
-        request.setRequestListener(new RequestResponse.Listener<NetResponse>() {
-            @Override
-            public void onResponse(NetResponse response) {
-                try {
-                    responseListener.onSuccess((T) response.data, response.isCache);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).setErrorListener(new RequestResponse.ErrorListener() {
+        request.setErrorListener(new RequestResponse.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 try {
@@ -136,18 +119,23 @@ public abstract class CustomApi<T> implements BaseApi {
 
     @Override
     public void start() {
-        Observable.create(new Observable.OnSubscribe<Request>() {
+        Request request = getRequest();
+        RxVolleyAdapter.getObservable((StringRequest) request).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<NetResponse>() {
             @Override
-            public void call(Subscriber<? super Request> subscriber) {
-                subscriber.onNext(getRequest());
-                subscriber.onCompleted();
+            public void call(NetResponse netResponse) {
+                Log.i("RxVolley", "NetResponse Action");
+                responseListener.onSuccess((T) netResponse.data, netResponse.isCache);
             }
-        }).subscribeOn(Schedulers.io()).subscribe(new Action1<Request>() {
+                }, new Action1<Throwable>() {
             @Override
-            public void call(Request request) {
-                VolleyQueue.getInstance().addRequest(getRequest());
+            public void call(Throwable throwable) {
+                throwable.printStackTrace();
             }
         });
+        VolleyQueue.getInstance().addRequest(request);
+
+
     }
 
     @Override

@@ -12,6 +12,8 @@ import com.leif.moudle.ReposEntity;
 public class ReposApi extends CustomApi {
     public ReposApi(ResponseListener responseListener) {
         super(responseListener);
+        setCacheTime(60 * 1000);
+        setIsNeedRefersh(true);
     }
 
     @Override
