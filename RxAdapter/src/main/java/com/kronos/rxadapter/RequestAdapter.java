@@ -14,6 +14,7 @@ public class RequestAdapter {
     private NetResponse netResponse;
     private boolean isReady = false;
     private boolean isFinish = false;
+    private VolleyError volleyError;
 
     public boolean isReady() {
         boolean ready = isReady;
@@ -23,7 +24,10 @@ public class RequestAdapter {
         return ready;
     }
 
-    public NetResponse getNetResponse() {
+    public NetResponse getNetResponse() throws VolleyError {
+        if (netResponse == null) {
+            throw volleyError;
+        }
         return netResponse;
     }
 
@@ -48,6 +52,7 @@ public class RequestAdapter {
         }).setErrorListener(new RequestResponse.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                volleyError = error;
                 isFinish = true;
                 isReady = true;
             }

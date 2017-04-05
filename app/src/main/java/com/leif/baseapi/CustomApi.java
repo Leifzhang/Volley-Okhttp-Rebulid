@@ -21,8 +21,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+
+import static com.kronos.rxadapter.RxVolleyAdapter.getObservable;
 
 
 /**
@@ -34,6 +37,10 @@ public abstract class CustomApi<T> implements BaseApi {
     protected Bundle bundle;
     private String Tag = getClass().getName();
     private String realUrl;
+
+    public CustomApi(Bundle bundle) {
+        this.bundle = bundle;
+    }
 
     public CustomApi(ResponseListener<T> responseListener) {
         this(responseListener, null);
@@ -120,7 +127,7 @@ public abstract class CustomApi<T> implements BaseApi {
     @Override
     public void start() {
         Request request = getRequest();
-        RxVolleyAdapter.getObservable((StringRequest) request).observeOn(AndroidSchedulers.mainThread())
+        getObservable((StringRequest) request).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<NetResponse>() {
             @Override
             public void call(NetResponse netResponse) {
@@ -130,6 +137,10 @@ public abstract class CustomApi<T> implements BaseApi {
                 }, new Action1<Throwable>() {
             @Override
             public void call(Throwable throwable) {
+                if (throwable instanceof VolleyError) {
+                    onError(((VolleyError) throwable).networkResponse.statusCode,
+                            ((VolleyError) throwable).networkResponse.errorResponseString);
+                }
                 throwable.printStackTrace();
             }
         });
@@ -184,4 +195,10 @@ public abstract class CustomApi<T> implements BaseApi {
         }
     }
 
+    public Observable<T> startRequest() {
+        Request request = getRequest();
+        Observable<T> observable = RxVolleyAdapter.getObservable((StringRequest) request).map(netResponse -> (T) netResponse.data);
+        VolleyQueue.getInstance().addRequest(request);
+        return observable;
+    }
 }

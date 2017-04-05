@@ -2,12 +2,14 @@ package com.kronos.rxadapter;
 
 import android.util.Log;
 
+import com.kronos.volley.VolleyError;
 import com.kronos.volley.toolbox.NetResponse;
 import com.kronos.volley.toolbox.StringRequest;
 
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
+import rx.exceptions.Exceptions;
 import rx.functions.Func1;
 
 /**
@@ -34,7 +36,11 @@ public class RxVolleyAdapter {
             @Override
             public NetResponse call(Long o) {
                 Log.i("Observable", "NetResponse");
-                return adapter.getNetResponse();
+                try {
+                    return adapter.getNetResponse();
+                } catch (VolleyError volleyError) {
+                    throw Exceptions.propagate(volleyError);
+                }
             }
         });
 
