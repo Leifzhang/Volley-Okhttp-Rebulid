@@ -10,11 +10,12 @@ import com.kronos.volley.toolbox.StringRequest;
  * Email leifzhanggithub@gmail.com
  */
 
-public class RequestAdapter {
+public class RequestAdapter implements RequestResponse.Listener<NetResponse>, RequestResponse.ErrorListener {
     private NetResponse netResponse;
     private boolean isReady = false;
     private boolean isFinish = false;
     private VolleyError volleyError;
+    private StringRequest request;
 
     public boolean isReady() {
         boolean ready = isReady;
@@ -37,25 +38,25 @@ public class RequestAdapter {
     }
 
     public RequestAdapter(final StringRequest request) {
-        request.setRequestListener(new RequestResponse.Listener<NetResponse>() {
+        this.request = request;
+        request.setRequestListener(this).setErrorListener(this);
+    }
 
-            @Override
-            public void onResponse(NetResponse response) {
-                netResponse = response;
-                isReady = true;
-                if (!request.isRefreshNeed()) {
-                    isFinish = true;
-                } else {
-                    isFinish = !response.isCache;
-                }
-            }
-        }).setErrorListener(new RequestResponse.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                volleyError = error;
-                isFinish = true;
-                isReady = true;
-            }
-        });
+    @Override
+    public void onErrorResponse(VolleyError error) {
+        volleyError = error;
+        isFinish = true;
+        isReady = true;
+    }
+
+    @Override
+    public void onResponse(NetResponse response) {
+        netResponse = response;
+        isReady = true;
+        if (!request.isRefreshNeed()) {
+            isFinish = true;
+        } else {
+            isFinish = !response.isCache;
+        }
     }
 }

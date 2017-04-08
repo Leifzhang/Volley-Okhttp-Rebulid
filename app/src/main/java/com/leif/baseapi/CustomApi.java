@@ -11,7 +11,6 @@ import com.kronos.volley.Request;
 import com.kronos.volley.RequestResponse;
 import com.kronos.volley.VolleyError;
 import com.kronos.volley.toolbox.BaseApiParser;
-import com.kronos.volley.toolbox.NetResponse;
 import com.kronos.volley.toolbox.StringRequest;
 import com.leif.baseapi.host.UrlPacker;
 
@@ -23,7 +22,6 @@ import java.util.Set;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 
 import static com.kronos.rxadapter.RxVolleyAdapter.getObservable;
 
@@ -128,25 +126,17 @@ public abstract class CustomApi<T> implements BaseApi {
     public void start() {
         Request request = getRequest();
         getObservable((StringRequest) request).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<NetResponse>() {
-            @Override
-            public void call(NetResponse netResponse) {
-                Log.i("RxVolley", "NetResponse Action");
-                responseListener.onSuccess((T) netResponse.data, netResponse.isCache);
-            }
-                }, new Action1<Throwable>() {
-            @Override
-            public void call(Throwable throwable) {
-                if (throwable instanceof VolleyError) {
-                    onError(((VolleyError) throwable).networkResponse.statusCode,
-                            ((VolleyError) throwable).networkResponse.errorResponseString);
-                }
-                throwable.printStackTrace();
-            }
-        });
+                .subscribe(netResponse -> {
+                    Log.i("RxVolley", "NetResponse Action");
+                    responseListener.onSuccess((T) netResponse.data, netResponse.isCache);
+                }, throwable -> {
+                    if (throwable instanceof VolleyError) {
+                        onError(((VolleyError) throwable).networkResponse.statusCode,
+                                ((VolleyError) throwable).networkResponse.errorResponseString);
+                    }
+                    throwable.printStackTrace();
+                });
         VolleyQueue.getInstance().addRequest(request);
-
-
     }
 
     @Override
