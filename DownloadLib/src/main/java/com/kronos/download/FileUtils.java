@@ -1,5 +1,9 @@
 package com.kronos.download;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -23,6 +27,15 @@ public class FileUtils {
             e.printStackTrace();
         }
         return true;
+    }
+
+
+
+    public static Boolean isConnectWIFI(Context context) {
+        ConnectivityManager connectManager = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = connectManager.getActiveNetworkInfo();
+        return info != null && info.getType() == ConnectivityManager.TYPE_WIFI;
     }
 
 

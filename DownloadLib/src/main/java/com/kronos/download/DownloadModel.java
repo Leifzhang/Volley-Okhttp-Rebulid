@@ -23,6 +23,12 @@ public class DownloadModel extends BaseObserveAdapter {
     private String downloadFolder = Environment.getExternalStorageDirectory().getPath() + "/wallstreetcn/";
     private String sdFile;
     private String fileName;
+    private String suffixName;
+
+    public void setSuffixName(String suffixName) {
+        this.suffixName = suffixName;
+    }
+
     private int progress;
     private int state;
     private long totalLength;
@@ -127,7 +133,11 @@ public class DownloadModel extends BaseObserveAdapter {
             fileName = TextUtils.isEmpty(fileName) ? "未知文件" : fileName;
             suffix = ".temp";
         }
-        return suffix;
+        if (TextUtils.isEmpty(suffixName)) {
+            return suffix;
+        } else {
+            return suffixName;
+        }
     }
 
     public boolean check() {
@@ -140,5 +150,10 @@ public class DownloadModel extends BaseObserveAdapter {
 
     public void setDownloadLength(long downloadLength) {
         this.downloadLength = downloadLength;
+    }
+
+    public void deleteFile() {
+        File file = new File(fileName);
+        file.delete();
     }
 }

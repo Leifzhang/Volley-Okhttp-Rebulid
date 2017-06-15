@@ -48,6 +48,7 @@ public class DownloadManager {
             downloadModel = new DownloadModel();
             downloadModel.setFileName(fileName);
             downloadModel.setDownloadUrl(url);
+            downloadModel.setSuffixName(getInstance().config.getSettingConfig().getFileSuffix());
             downloadModel.setDownloadFolder(getInstance().config.getDownloadFolder());
             getInstance().putModel(url, downloadModel);
         }
@@ -76,11 +77,13 @@ public class DownloadManager {
     }
 
     public void startAll(Context context) {
-        for (Map.Entry<String, DownloadModel> entry : models.entrySet()) {
+        if (config.getSettingConfig().isAutoDownload() || FileUtils.isConnectWIFI(context)) {
+            for (Map.Entry<String, DownloadModel> entry : models.entrySet()) {
             entry.getValue().setState(DownloadConstants.DOWNLOADING);
             Intent intent = new Intent(context, DownloadService.class);
             intent.putExtra("url", entry.getKey());
             context.startService(intent);
+            }
         }
     }
 

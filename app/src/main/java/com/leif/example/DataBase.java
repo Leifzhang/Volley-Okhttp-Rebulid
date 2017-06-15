@@ -19,23 +19,20 @@ public class DataBase implements IDownloadDb {
     public void saveToDb(HashMap<String, DownloadModel> models) {
         Observable.just(models).flatMap(stringDownloadModelHashMap ->
                 Observable.from(stringDownloadModelHashMap.values())).subscribe(downloadModel -> {
-            DownloadRealm downloadRealm = Realm.getDefaultInstance().where(DownloadRealm.class)
-                    .equalTo("downloadUrl", downloadModel.getDownloadUrl()).findFirst();
-            if (downloadRealm == null) {
-                downloadRealm = new DownloadRealm();
-            }
-            final DownloadRealm finalDownloadRealm = downloadRealm;
             Realm.getDefaultInstance().executeTransaction(realm -> {
-                finalDownloadRealm.setDownloadUrl(downloadModel.getDownloadUrl());
-                finalDownloadRealm.setState(downloadModel.getState());
-                finalDownloadRealm.setTotalLength(downloadModel.getTotalLength());
-                finalDownloadRealm.setDownloadLength(downloadModel.getDownloadLength());
-                finalDownloadRealm.setProgress(downloadModel.getProgress());
-                realm.copyToRealmOrUpdate(finalDownloadRealm);
+                DownloadRealm downloadRealm = Realm.getDefaultInstance().where(DownloadRealm.class)
+                        .equalTo("downloadUrl", downloadModel.getDownloadUrl()).findFirst();
+                if (downloadRealm == null) {
+                    downloadRealm = new DownloadRealm();
+                    downloadRealm.setDownloadUrl(downloadModel.getDownloadUrl());
+                }
+                downloadRealm.setState(downloadModel.getState());
+                downloadRealm.setTotalLength(downloadModel.getTotalLength());
+                downloadRealm.setDownloadLength(downloadModel.getDownloadLength());
+                downloadRealm.setProgress(downloadModel.getProgress());
+                realm.copyToRealmOrUpdate(downloadRealm);
             });
-        }, throwable -> {
-
-        });
+        }, Throwable::printStackTrace);
 
     }
 

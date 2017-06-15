@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.kronos.download.DownloadConfig;
 import com.kronos.download.DownloadManager;
+import com.kronos.download.DownloadSettingConfig;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -23,8 +24,10 @@ public class AppContext extends Application {
                 .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(config);
-        DownloadConfig downloadConfig = new DownloadConfig.Builder().setDownloadDb(new DataBase()).builder();
+        DownloadSettingConfig settingConfig = new DownloadSettingConfig().setAutoDownload(true).setFileSuffix(".temp");
+        DownloadConfig downloadConfig = new DownloadConfig.Builder().setDownloadDb(new DataBase()).setSettingConfig(settingConfig).builder();
         DownloadManager.getInstance().setConfig(downloadConfig);
+        DownloadManager.getInstance().startAll(this);
     }
 
     @Override

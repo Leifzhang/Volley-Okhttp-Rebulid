@@ -1,5 +1,6 @@
 package com.leif.example;
 
+import android.Manifest;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,8 +17,11 @@ import com.kronos.download.DownloadManager;
 import com.leif.api.ReposApi;
 import com.leif.baseapi.ResponseListener;
 import com.leif.moudle.ReposEntity;
+import com.tbruyelle.rxpermissions.RxPermissions;
 
 import java.util.List;
+
+import rx.functions.Action1;
 
 public class MainActivity extends AppCompatActivity {
     FloatingActionButton fab;
@@ -29,6 +33,12 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
+        new  RxPermissions(this).request(Manifest.permission.WRITE_EXTERNAL_STORAGE).subscribe(new Action1<Boolean>() {
+            @Override
+            public void call(Boolean aBoolean) {
+
+            }
+        }, Throwable::printStackTrace);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

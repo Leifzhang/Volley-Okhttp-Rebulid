@@ -26,11 +26,11 @@ public class ItemEntity {
 
     public static List<ItemEntity> getEntityList() {
         List<ItemEntity> list = new ArrayList<>();
-        ItemEntity entity = new ItemEntity("美丽家", "http://download.apk8.com/d2/soft/meilijia.apk");
+        ItemEntity entity = new ItemEntity("视频1", "http://wpimg.wallstcn.com/83a85415-64b9-45ca-9a6c-ecf508ba7d4d");
         list.add(entity);
-        entity = new ItemEntity("果然方便", "http://download.apk8.com/d2/soft/guoranfangbian.apk");
+        entity = new ItemEntity("梁非凡", "https://wpimg.wallstcn.com/9bb79831-360c-4d7c-8fb6-eb2b292eacdd");
         list.add(entity);
-        entity = new ItemEntity("薄荷", "http://download.apk8.com/d2/soft/bohe.apk");
+        entity = new ItemEntity("短视频", "http://streaming.wallstcn.com/%E9%95%BF%E8%B0%88%E5%B0%8F.mp4");
         list.add(entity);
         return list;
     }

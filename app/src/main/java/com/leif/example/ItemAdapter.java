@@ -50,9 +50,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
         public ItemViewHolder(View itemView) {
             super(itemView);
-            title = (TextView) itemView.findViewById(R.id.title);
-            progressBar = (ProgressBar) itemView.findViewById(R.id.progress);
-            button = (Button) itemView.findViewById(R.id.download);
+            title = itemView.findViewById(R.id.title);
+            progressBar = itemView.findViewById(R.id.progress);
+            button = itemView.findViewById(R.id.download);
         }
 
         public void bindViewHolder(ItemEntity itemEntity) {
@@ -65,6 +65,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                     if (model1.getState() == DownloadConstants.DOWNLOADING) {
                         model1.setState(DownloadConstants.DOWNLOAD_PAUSE);
                     } else {
+                        model1.setState(DownloadConstants.DOWNLOADING);
                         DownloadManager.setDownloadModel(itemEntity.getDownloadUrl(), itemView.getContext());
                     }
                 } else {
@@ -82,6 +83,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
             DownloadModel model = DownloadManager.getInstance()
                     .getModel(itemEntity.getDownloadUrl());
             if (model != null) {
+                model.unregisterAll();
                 model.registerDataSetObserver(() -> progressBar.setProgress(model.getProgress()));
                 switch (model.getState()) {
                     case DownloadConstants.DOWNLOAD_FINISH:

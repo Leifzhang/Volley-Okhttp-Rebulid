@@ -13,6 +13,15 @@ public class DownloadConfig {
     private String downloadFolder;
     private OkHttpClient okHttpClient;
     private IDownloadDb downloadDb;
+    private DownloadSettingConfig settingConfig;
+
+    public DownloadSettingConfig getSettingConfig() {
+        return settingConfig;
+    }
+
+    public void setSettingConfig(DownloadSettingConfig settingConfig) {
+        this.settingConfig = settingConfig;
+    }
 
     public IDownloadDb getDownloadDb() {
         return downloadDb;
@@ -42,6 +51,7 @@ public class DownloadConfig {
         private String downloadFolder;
         private OkHttpClient okHttpClient;
         private IDownloadDb downloadDb;
+        private DownloadSettingConfig settingConfig;
 
         public Builder setDownloadDb(IDownloadDb downloadDb) {
             this.downloadDb = downloadDb;
@@ -55,6 +65,11 @@ public class DownloadConfig {
 
         public Builder setOkHttpClient(OkHttpClient okHttpClient) {
             this.okHttpClient = okHttpClient;
+            return this;
+        }
+
+        public Builder setSettingConfig(DownloadSettingConfig settingConfig) {
+            this.settingConfig = settingConfig;
             return this;
         }
 
@@ -73,6 +88,10 @@ public class DownloadConfig {
                 throw new NullPointerException();
             }
             downloadConfig.setDownloadDb(downloadDb);
+            if (settingConfig == null) {
+                settingConfig = new DownloadSettingConfig();
+            }
+            downloadConfig.setSettingConfig(settingConfig);
             return downloadConfig;
         }
     }
