@@ -180,4 +180,10 @@ public class DownloadManager {
         config.getDownloadDb().saveToDb(models);
     }
 
+    public void remove(String url) {
+        if (models.containsKey(url)) {
+            models.remove(url);
+        }
+    }
+
 }
