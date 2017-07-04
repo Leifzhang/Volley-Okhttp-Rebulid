@@ -17,10 +17,6 @@ import org.json.JSONObject;
 
 import java.util.Map;
 
-import rx.Observable;
-import rx.Subscriber;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by Leif Zhang on 16/8/4.
@@ -121,18 +117,7 @@ public abstract class CustomFileApi implements BaseApi {
 
     @Override
     public void start() {
-        Observable.create(new Observable.OnSubscribe<Request>() {
-            @Override
-            public void call(Subscriber<? super Request> subscriber) {
-                subscriber.onNext(getRequest());
-                subscriber.onCompleted();
-            }
-        }).subscribeOn(Schedulers.io()).subscribe(new Action1<Request>() {
-            @Override
-            public void call(Request request) {
-                VolleyQueue.getInstance().addRequest(getRequest());
-            }
-        });
+        VolleyQueue.getInstance().addRequest(getRequest());
     }
 
     long cacheTime = 0;

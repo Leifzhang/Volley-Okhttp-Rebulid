@@ -17,11 +17,9 @@ import com.kronos.download.DownloadManager;
 import com.leif.api.ReposApi;
 import com.leif.baseapi.ResponseListener;
 import com.leif.moudle.ReposEntity;
-import com.tbruyelle.rxpermissions.RxPermissions;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import java.util.List;
-
-import rx.functions.Action1;
 
 public class MainActivity extends AppCompatActivity {
     FloatingActionButton fab;
@@ -33,11 +31,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
-        new  RxPermissions(this).request(Manifest.permission.WRITE_EXTERNAL_STORAGE).subscribe(new Action1<Boolean>() {
-            @Override
-            public void call(Boolean aBoolean) {
+        new RxPermissions(this).request(Manifest.permission.WRITE_EXTERNAL_STORAGE).subscribe(aBoolean -> {
 
-            }
         }, Throwable::printStackTrace);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

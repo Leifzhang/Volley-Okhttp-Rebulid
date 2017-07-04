@@ -6,7 +6,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 
-import com.kronos.rxadapter.RxVolleyAdapter;
+import com.kronos.rx2adapter.RxVolleyAdapter;
 import com.kronos.volley.Request;
 import com.kronos.volley.RequestResponse;
 import com.kronos.volley.VolleyError;
@@ -20,10 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-
-import static com.kronos.rxadapter.RxVolleyAdapter.getObservable;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 
 /**
@@ -125,7 +123,7 @@ public abstract class CustomApi<T> implements BaseApi {
     @Override
     public void start() {
         Request request = getRequest();
-        getObservable((StringRequest) request).observeOn(AndroidSchedulers.mainThread())
+        RxVolleyAdapter.getObservable((StringRequest) request).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(netResponse -> {
                     Log.i("RxVolley", "NetResponse Action");
                     responseListener.onSuccess((T) netResponse.data, netResponse.isCache);

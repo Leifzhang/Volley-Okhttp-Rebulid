@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.kronos.download.DownloadConstants;
 import com.kronos.download.DownloadManager;
 import com.kronos.download.DownloadModel;
+import com.kronos.download.adapter.IObserver;
 import com.leif.moudle.ItemEntity;
 
 import java.util.List;
@@ -73,7 +74,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                     model1 = DownloadManager.getInstance()
                             .getModel(itemEntity.getDownloadUrl());
                     final DownloadModel finalModel = model1;
-                    model1.registerDataSetObserver(() -> progressBar.setProgress(finalModel.getProgress()));
+                    model1.registerDataSetObserver(new IObserver() {
+                        @Override
+                        public void onChanged() {
+                            progressBar.setProgress(finalModel.getProgress());
+                        }
+                    });
                 }
                 setState(itemEntity);
             });
