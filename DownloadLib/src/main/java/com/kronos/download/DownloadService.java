@@ -21,7 +21,6 @@ public class DownloadService extends IntentService {
             DownloadManager.getInstance().save();
         } catch (Exception e) {
             e.printStackTrace();
-            DownloadManager.getInstance().save();
         }
     }
 

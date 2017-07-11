@@ -27,7 +27,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.squareup.okhttp3:okhttp:3.8.0'
+    compile 'com.squareup.okhttp3:okhttp:3.8.1'
 }
 def siteUrl = 'https://github.com/Leifzhang/Volley-Okhttp-Rebulid' // 项目的主页
 def gitUrl = 'https://github.com/Leifzhang/Volley-Okhttp-Rebulid.git' // Git仓库的url
