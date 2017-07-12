@@ -84,7 +84,7 @@ public abstract class CustomApi<T> implements BaseApi {
             @Override
             public void onErrorResponse(VolleyError error) {
                 try {
-                    onError(error.networkResponse.statusCode, error.networkResponse.errorResponseString);
+                    onError(error);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -129,8 +129,7 @@ public abstract class CustomApi<T> implements BaseApi {
                     responseListener.onSuccess((T) netResponse.data, netResponse.isCache);
                 }, throwable -> {
                     if (throwable instanceof VolleyError) {
-                        onError(((VolleyError) throwable).networkResponse.statusCode,
-                                ((VolleyError) throwable).networkResponse.errorResponseString);
+                        onError((VolleyError) throwable);
                     }
                     throwable.printStackTrace();
                 });
@@ -172,11 +171,11 @@ public abstract class CustomApi<T> implements BaseApi {
         }
     }
 
-    public void onError(int statusCode, String errorMessage) {
+    public void onError(VolleyError error) {
         try {
             Log.i("onVolleyError", Tag + getUrl());
             if (responseListener != null) {
-                responseListener.onErrorResponse(statusCode, errorMessage);
+                responseListener.onErrorResponse(error.networkResponse.statusCode, error.networkResponse.errorResponseString);
             }
         } catch (Exception e) {
             e.printStackTrace();

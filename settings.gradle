@@ -1,1 +1,1 @@
-include ':app', ':VolleyLib', ':DownloadLib', ':RxAdapter', ':Rx2Adapter'
+include ':app', ':DownloadLib', ':RxAdapter', ':Rx2Adapter', ':VolleyLib'

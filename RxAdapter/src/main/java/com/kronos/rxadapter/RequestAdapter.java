@@ -26,7 +26,7 @@ public class RequestAdapter implements RequestResponse.Listener<NetResponse>, Re
     }
 
     public NetResponse getNetResponse() throws VolleyError {
-        if (netResponse == null) {
+        if (volleyError != null) {
             throw volleyError;
         }
         return netResponse;

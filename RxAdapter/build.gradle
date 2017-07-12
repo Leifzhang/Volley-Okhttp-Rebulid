@@ -31,7 +31,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     provided 'io.reactivex:rxandroid:1.2.1'
-    provided 'com.github.leifzhang:VolleyLib:0.4.3'
+    provided 'com.github.leifzhang:VolleyLib:0.4.8'
 }
 def siteUrl = 'https://github.com/Leifzhang/Volley-Okhttp-Rebulid' // 项目的主页
 def gitUrl = 'https://github.com/Leifzhang/Volley-Okhttp-Rebulid.git' // Git仓库的url

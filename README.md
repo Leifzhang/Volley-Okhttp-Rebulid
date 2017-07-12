@@ -12,9 +12,9 @@ sample中有简单的网络库封装逻辑.同时数据解析器会放在线程�
 Add this line to your `build.gradle` file under your module directory. 
 
 ```
-compile 'com.github.leifzhang:VolleyLib:0.4.5'
+compile 'com.github.leifzhang:VolleyLib:0.4.7'
 
-compile 'com.github.leifzhang:DownloadLib:0.4.5'
+compile 'com.github.leifzhang:DownloadLib:0.4.7'
 ```
 
 ## How to use it
