@@ -1,4 +1,4 @@
-## Volley-OkHttp-Rebuild
+## RxVolley
 
 基于谷歌volley和OkHttp3网络请求库的重构版本,同时增加文件from上传功能以及网络请求本地cache功能,将请求的cache控制在request中.
 
@@ -8,13 +8,15 @@ sample中有简单的网络库封装逻辑.同时数据解析器会放在线程�
 
 同时修复了http 请求返回eTag 304 无法使用的bug。
 
+增加RxJava和RxJava2 Adapter，支持链式写法。
+
 ## Usage
 Add this line to your `build.gradle` file under your module directory. 
 
 ```
-compile 'com.github.leifzhang:VolleyLib:0.4.7'
+compile 'com.github.leifzhang:VolleyLib:0.4.11'
 
-compile 'com.github.leifzhang:DownloadLib:0.4.7'
+compile 'com.github.leifzhang:DownloadLib:0.4.11'
 ```
 
 ## How to use it
