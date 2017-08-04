@@ -7,6 +7,9 @@ import java.util.HashMap;
  * Email leifzhanggithub@gmail.com
  */
 public interface IDownloadDb {
+
+    void saveToDb(DownloadModel model);
+
     void saveToDb(HashMap<String, DownloadModel> models);
 
     HashMap<String, DownloadModel> getFromDB();

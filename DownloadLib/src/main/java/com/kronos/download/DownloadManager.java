@@ -97,7 +97,7 @@ public class DownloadManager {
 
     private void putModel(String url, DownloadModel model) {
         models.put(url, model);
-        save();
+        saveAll();
     }
 
     public DownloadModel getModel(String url) {
@@ -175,9 +175,21 @@ public class DownloadManager {
         return config.getOkHttpClient();
     }
 
+    public void saveOne(String url) {
+        try {
+            config.getDownloadDb().saveToDb(models.get(url));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-    public void save() {
-        config.getDownloadDb().saveToDb(models);
+
+    public void saveAll() {
+        try {
+            config.getDownloadDb().saveToDb(models);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void remove(String url) {

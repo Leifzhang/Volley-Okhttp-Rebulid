@@ -11,4 +11,8 @@ public class NetResponse {
         this.isCache = isCache;
         this.data = o;
     }
+
+    public <T> T getData() {
+        return (T) data;
+    }
 }

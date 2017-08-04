@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.reactivex.Observable;
-import io.reactivex.functions.Consumer;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -18,36 +17,41 @@ import io.realm.RealmResults;
  */
 public class DataBase implements IDownloadDb {
     @Override
-    public void saveToDb(HashMap<String, DownloadModel> models) {
-        DownloadModel[] modelArray = new DownloadModel[models.entrySet().size()];
-        int i = 0;
-        for (Map.Entry<String, DownloadModel> entry : models.entrySet()) {
-            modelArray[i] = entry.getValue();
-            i++;
-        }
-        Observable.fromArray(modelArray).subscribe(new Consumer<DownloadModel>() {
-            @Override
-            public void accept(DownloadModel downloadModel) throws Exception {
-                Realm.getDefaultInstance().executeTransaction(realm -> {
-                    DownloadRealm downloadRealm = Realm.getDefaultInstance().where(DownloadRealm.class)
-                            .equalTo("downloadUrl", downloadModel.getDownloadUrl()).findFirst();
-                    if (downloadRealm == null) {
-                        downloadRealm = new DownloadRealm();
-                        downloadRealm.setDownloadUrl(downloadModel.getDownloadUrl());
-                    }
-                    downloadRealm.setState(downloadModel.getState());
-                    downloadRealm.setTotalLength(downloadModel.getTotalLength());
-                    downloadRealm.setDownloadLength(downloadModel.getDownloadLength());
-                    downloadRealm.setProgress(downloadModel.getProgress());
-                    realm.copyToRealmOrUpdate(downloadRealm);
-                });
+    public void saveToDb(DownloadModel model) {
+        Realm.getDefaultInstance().executeTransaction(realm -> {
+            DownloadRealm downloadRealm = Realm.getDefaultInstance().where(DownloadRealm.class)
+                    .equalTo("downloadUrl", model.getDownloadUrl()).findFirst();
+            if (downloadRealm == null) {
+                downloadRealm = new DownloadRealm();
+                downloadRealm.setDownloadUrl(model.getDownloadUrl());
             }
-        }, new Consumer<Throwable>() {
-            @Override
-            public void accept(Throwable throwable) throws Exception {
-                throwable.printStackTrace();
-            }
+            downloadRealm.setState(model.getState());
+            downloadRealm.setTotalLength(model.getTotalLength());
+            downloadRealm.setDownloadLength(model.getDownloadLength());
+            downloadRealm.setProgress(model.getProgress());
+            realm.copyToRealmOrUpdate(downloadRealm);
         });
+    }
+
+    @Override
+    public void saveToDb(HashMap<String, DownloadModel> models) {
+        Observable.just(models).subscribe(modelHashMap -> Realm.getDefaultInstance().executeTransaction(realm -> {
+            for (Map.Entry<String, DownloadModel> entry : modelHashMap.entrySet()) {
+                DownloadModel downloadModel = entry.getValue();
+                DownloadRealm finalDownloadDataRealmEntity = realm.where(DownloadRealm.class)
+                        .equalTo("downloadUrl", downloadModel.getDownloadUrl()).findFirst();
+                if (finalDownloadDataRealmEntity == null) {
+                    finalDownloadDataRealmEntity = new DownloadRealm();
+                    finalDownloadDataRealmEntity.setDownloadUrl(downloadModel.getDownloadUrl());
+                }
+                finalDownloadDataRealmEntity.setState(downloadModel.getState());
+                finalDownloadDataRealmEntity.setTotalLength(downloadModel.getTotalLength());
+                finalDownloadDataRealmEntity.setDownloadLength(downloadModel.getDownloadLength());
+                finalDownloadDataRealmEntity.setProgress(downloadModel.getProgress());
+                // finalDownloadDataRealmEntity.setFileName(downloadModel.getFileName());
+                realm.copyToRealmOrUpdate(finalDownloadDataRealmEntity);
+            }
+        }), Throwable::printStackTrace);
     }
 
     @Override
