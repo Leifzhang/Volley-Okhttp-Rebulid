@@ -37,7 +37,8 @@ compile 'com.github.leifzhang:DownloadLib:0.4.11'
         .setCacheTime(cacheTime).setIsRefreshNeed(isNeedRefresh);
         request.setRequestBody(getRequestBody());
 ```
-###Step 1
+
+### Step 1
 配置默认文件 '必须设置'
 
 ```java
@@ -45,7 +46,8 @@ compile 'com.github.leifzhang:DownloadLib:0.4.11'
         DownloadManager.getInstance().setConfig(downloadConfig);
 ```
 
-###Step 2
+
+### Step 2
 下载文件只要使用这个就会自动开启
     
 ```java
