@@ -34,7 +34,7 @@ public class DownloadManager {
 
     public void setConfig(DownloadConfig downloadConfig) {
         this.config = downloadConfig;
-        models = config.getDownloadDb().getFromDB();
+        models = config.getDownloadDb().getFromDB(downloadConfig);
     }
 
     public static void setDownloadModel(String url, Context context) {

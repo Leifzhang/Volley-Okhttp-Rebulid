@@ -12,5 +12,5 @@ public interface IDownloadDb {
 
     void saveToDb(HashMap<String, DownloadModel> models);
 
-    HashMap<String, DownloadModel> getFromDB();
+    HashMap<String, DownloadModel> getFromDB(DownloadConfig config);
 }

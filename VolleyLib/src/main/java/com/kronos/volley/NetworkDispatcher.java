@@ -93,11 +93,6 @@ public class NetworkDispatcher extends Thread {
                 if (mQuit) {
                     return;
                 }
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
-                }
                 continue;
             }
 
@@ -119,11 +114,10 @@ public class NetworkDispatcher extends Thread {
                 networkResponse.cacheTime = request.getCacheTime();
                 // If the server returned 304 AND we delivered a requestResponse already,
                 // we're done -- don't deliver a second identical requestResponse.
-                /*if (networkResponse.notModified && request.hasHadResponseDelivered()) {
+                if (networkResponse.notModified && request.hasHadResponseDelivered()) {
                     request.finish("not-modified");
                     mCache.update(request.getCacheKey(), request.getCacheTime());
-                    continue;
-                }*/
+                }
 
                 // Parse the requestResponse here on the worker thread.
                 RequestResponse<?> requestResponse = request.parseNetworkResponse(networkResponse);

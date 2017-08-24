@@ -24,7 +24,7 @@ import java.util.Map;
  */
 public interface Cache {
 
-    static final String PERMACACHE_KEY = "permacache:";
+    String PERMACACHE_KEY = "permacache:";
     
     /**
      * Retrieves an entry from the cache.
