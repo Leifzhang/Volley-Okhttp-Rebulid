@@ -51,12 +51,13 @@ public class RequestAdapter implements RequestResponse.Listener<NetResponse>, Re
 
     @Override
     public void onResponse(NetResponse response) {
-        netResponse = response;
-        isReady = true;
-        if (!request.isRefreshNeed()) {
-            isFinish = true;
-        } else {
-            isFinish = !response.isCache;
+        try {
+            netResponse = response;
+            isReady = true;
+            isFinish = !request.isRefreshNeed() || !response.isCache;
+        } catch (Exception e) {
+            e.printStackTrace();
+            onErrorResponse(new VolleyError());
         }
     }
 }
