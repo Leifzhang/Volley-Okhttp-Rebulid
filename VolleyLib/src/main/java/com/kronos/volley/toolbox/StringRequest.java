@@ -20,7 +20,7 @@ import com.kronos.volley.AuthFailureError;
 import com.kronos.volley.NetworkResponse;
 import com.kronos.volley.ParseError;
 import com.kronos.volley.Request;
-import com.kronos.volley.RequestResponse;
+import com.kronos.volley.Response;
 import com.kronos.volley.VolleyError;
 
 import java.io.UnsupportedEncodingException;
@@ -30,7 +30,7 @@ import java.util.Map;
  * A canned request for retrieving the response body at a given URL as a String.
  */
 public class StringRequest extends Request<NetResponse> {
-    private RequestResponse.Listener<NetResponse> mListener;
+    private Response.Listener<NetResponse> mListener;
     private Map<String, String> requestBody;
 
     public StringRequest(String url) {
@@ -38,25 +38,21 @@ public class StringRequest extends Request<NetResponse> {
     }
 
 
-    public StringRequest(int method, String url, RequestResponse.Listener<NetResponse> listener,
-                         RequestResponse.ErrorListener errorListener) {
+    public StringRequest(int method, String url, Response.Listener<NetResponse> listener,
+                         Response.ErrorListener errorListener) {
         super(url);
         setErrorListener(errorListener).setMethod(method);
         setRequestListener(listener);
     }
 
-    public Request setRequestListener(RequestResponse.Listener<NetResponse> mListener) {
+    public Request setRequestListener(Response.Listener<NetResponse> mListener) {
         this.mListener = mListener;
         return this;
     }
 
-    @Override
-    protected void deliverResponse(NetResponse response, boolean intermediate) {
-        mListener.onResponse(response);
-    }
 
     @Override
-    protected RequestResponse<NetResponse> parseNetworkResponse(NetworkResponse response) throws ParseError {
+    protected Response<NetResponse> parseNetworkResponse(NetworkResponse response) throws ParseError {
         NetResponse netResponse = null;
         String parsed = null;
         try {
@@ -66,13 +62,19 @@ public class StringRequest extends Request<NetResponse> {
         }
         Object o = getApiParser().parse(parsed);
         netResponse = new NetResponse(response.isCache, o);
-        return RequestResponse.success(netResponse, HttpHeaderParser.parseCacheHeaders(response));
+        return Response.success(netResponse, HttpHeaderParser.parseCacheHeaders(response));
     }
 
 
     @Override
     protected VolleyError parseNetworkError(VolleyError volleyError) {
         return super.parseNetworkError(volleyError);
+    }
+
+    @Override
+    protected void deliverResponse(NetResponse response) {
+
+        mListener.onResponse(response);
     }
 
     @Override

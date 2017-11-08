@@ -6,7 +6,7 @@ import android.util.Log;
 import android.util.Patterns;
 
 import com.kronos.volley.Request;
-import com.kronos.volley.RequestResponse;
+import com.kronos.volley.Response;
 import com.kronos.volley.VolleyError;
 import com.kronos.volley.toolbox.BaseApiParser;
 import com.kronos.volley.toolbox.FileUploadRequest;
@@ -58,7 +58,7 @@ public abstract class CustomFileApi implements BaseApi {
             return null;
         }
         FileUploadRequest request = new FileUploadRequest(url);
-        request.setRequestListener(new RequestResponse.Listener<NetResponse>() {
+        request.setRequestListener(new Response.Listener<NetResponse>() {
             @Override
             public void onResponse(NetResponse response) {
                 try {
@@ -67,7 +67,7 @@ public abstract class CustomFileApi implements BaseApi {
                     e.printStackTrace();
                 }
             }
-        }).setErrorListener(new RequestResponse.ErrorListener() {
+        }).setErrorListener(new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 try {

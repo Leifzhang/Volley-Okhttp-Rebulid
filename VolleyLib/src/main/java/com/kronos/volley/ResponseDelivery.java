@@ -18,15 +18,15 @@ package com.kronos.volley;
 
 public interface ResponseDelivery {
     /**
-     * Parses a requestResponse from the network or cache and delivers it.
+     * Parses a response from the network or cache and delivers it.
      */
-    void postResponse(Request<?> request, RequestResponse<?> requestResponse);
+    void postResponse(Request<?> request, Response<?> response);
 
     /**
-     * Parses a requestResponse from the network or cache and delivers it. The provided
+     * Parses a response from the network or cache and delivers it. The provided
      * Runnable will be executed after delivery.
      */
-    void postResponse(Request<?> request, RequestResponse<?> requestResponse, Runnable runnable);
+    void postResponse(Request<?> request, Response<?> response, Runnable runnable);
 
     /**
      * Posts an error for the given request.

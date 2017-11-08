@@ -44,7 +44,7 @@ public class HttpHeaderParser {
         long maxAge = 0;
         boolean hasCacheControl = false;
 
-        String serverEtag = null;
+        String serverETag = null;
         String headerValue;
 
 
@@ -67,7 +67,7 @@ public class HttpHeaderParser {
         }
         String ETag = "ETag".toLowerCase();
 
-        serverEtag = headers.get(ETag);
+        serverETag = headers.get(ETag);
 
         // Cache-Control takes precedence over an Expires header, even if both exist and Expires
         // is more restrictive.
@@ -82,7 +82,7 @@ public class HttpHeaderParser {
 
         Cache.Entry entry = new Cache.Entry();
         entry.data = response.data;
-        entry.etag = serverEtag;
+        entry.etag = serverETag;
         entry.softTtl = softExpire + response.cacheTime;
         entry.ttl = entry.softTtl;
         entry.serverDate = serverDate;

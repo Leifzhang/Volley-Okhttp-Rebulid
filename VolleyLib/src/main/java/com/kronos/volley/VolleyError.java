@@ -22,6 +22,7 @@ package com.kronos.volley;
 @SuppressWarnings("serial")
 public class VolleyError extends RuntimeException {
     public final NetworkResponse networkResponse;
+    private long networkTimeMs;
 
     public VolleyError() {
         networkResponse = null;
@@ -32,8 +33,8 @@ public class VolleyError extends RuntimeException {
     }
 
     public VolleyError(String exceptionMessage) {
-       super(exceptionMessage);
-       networkResponse = null;
+        super(exceptionMessage);
+        networkResponse = null;
     }
 
     public VolleyError(String exceptionMessage, Throwable reason) {
@@ -44,5 +45,13 @@ public class VolleyError extends RuntimeException {
     public VolleyError(Throwable cause) {
         super(cause);
         networkResponse = null;
+    }
+
+    /* package */ void setNetworkTimeMs(long networkTimeMs) {
+        this.networkTimeMs = networkTimeMs;
+    }
+
+    public long getNetworkTimeMs() {
+        return networkTimeMs;
     }
 }

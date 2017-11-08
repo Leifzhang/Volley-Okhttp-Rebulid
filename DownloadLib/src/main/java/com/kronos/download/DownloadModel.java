@@ -153,7 +153,7 @@ public class DownloadModel extends BaseObserveAdapter {
     }
 
     public void deleteFile() {
-        File file = new File(fileName);
+        File file = new File(getSdCardFile());
         file.delete();
     }
 }

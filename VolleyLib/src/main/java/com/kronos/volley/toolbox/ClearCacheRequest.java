@@ -22,7 +22,7 @@ import android.os.Looper;
 import com.kronos.volley.Cache;
 import com.kronos.volley.NetworkResponse;
 import com.kronos.volley.Request;
-import com.kronos.volley.RequestResponse;
+import com.kronos.volley.Response;
 
 
 /**
@@ -62,12 +62,13 @@ public class ClearCacheRequest extends Request<Object> {
     }
 
     @Override
-    protected RequestResponse<Object> parseNetworkResponse(NetworkResponse response) {
+    protected Response<Object> parseNetworkResponse(NetworkResponse response) {
         return null;
     }
 
     @Override
-    protected void deliverResponse(Object response, boolean intermediate) {
+    protected void deliverResponse(Object response) {
+
     }
 
 }

@@ -1,6 +1,7 @@
 package com.leif.example;
 
 
+import com.kronos.download.DownloadConfig;
 import com.kronos.download.DownloadModel;
 import com.kronos.download.IDownloadDb;
 
@@ -55,7 +56,7 @@ public class DataBase implements IDownloadDb {
     }
 
     @Override
-    public HashMap<String, DownloadModel> getFromDB() {
+    public HashMap<String, DownloadModel> getFromDB(DownloadConfig config) {
         RealmResults<DownloadRealm> list = Realm.getDefaultInstance().where(DownloadRealm.class).findAll();
         HashMap<String, DownloadModel> hashMap = new HashMap<>();
         for (DownloadRealm downloadRealm : list) {
@@ -69,4 +70,6 @@ public class DataBase implements IDownloadDb {
         }
         return hashMap;
     }
+
+
 }

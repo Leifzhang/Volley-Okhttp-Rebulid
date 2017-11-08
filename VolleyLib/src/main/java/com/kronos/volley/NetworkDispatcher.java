@@ -20,43 +20,34 @@ import android.annotation.TargetApi;
 import android.net.TrafficStats;
 import android.os.Build;
 import android.os.Process;
+import android.os.SystemClock;
 
 import java.util.concurrent.BlockingQueue;
 
 public class NetworkDispatcher extends Thread {
-    /**
-     * The queue of requests to service.
-     */
+
+    /** The queue of requests to service. */
     private final BlockingQueue<Request<?>> mQueue;
-    /**
-     * The network interface for processing requests.
-     */
+    /** The network interface for processing requests. */
     private final Network mNetwork;
-    /**
-     * The cache to write to.
-     */
+    /** The cache to write to. */
     private final Cache mCache;
-    /**
-     * For posting responses and errors.
-     */
+    /** For posting responses and errors. */
     private final ResponseDelivery mDelivery;
-    /**
-     * Used for telling us to die.
-     */
+    /** Used for telling us to die. */
     private volatile boolean mQuit = false;
 
     /**
      * Creates a new network dispatcher thread.  You must call {@link #start()}
      * in order to begin processing.
      *
-     * @param queue    Queue of incoming requests for triage
-     * @param network  Network interface to use for performing requests
-     * @param cache    Cache interface to use for writing responses to cache
+     * @param queue Queue of incoming requests for triage
+     * @param network Network interface to use for performing requests
+     * @param cache Cache interface to use for writing responses to cache
      * @param delivery Delivery interface to use for posting responses
      */
     public NetworkDispatcher(BlockingQueue<Request<?>> queue,
-                             Network network, Cache cache,
-                             ResponseDelivery delivery) {
+                             Network network, Cache cache, ResponseDelivery delivery) {
         mQueue = queue;
         mNetwork = network;
         mCache = cache;
@@ -83,8 +74,9 @@ public class NetworkDispatcher extends Thread {
     @Override
     public void run() {
         Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-        Request<?> request;
         while (true) {
+            long startTimeMs = SystemClock.elapsedRealtime();
+            Request<?> request;
             try {
                 // Take a request from the queue.
                 request = mQueue.take();
@@ -103,6 +95,7 @@ public class NetworkDispatcher extends Thread {
                 // network request.
                 if (request.isCanceled()) {
                     request.finish("network-discard-cancelled");
+                    request.notifyListenerResponseNotUsable();
                     continue;
                 }
 
@@ -111,39 +104,40 @@ public class NetworkDispatcher extends Thread {
                 // Perform the network request.
                 NetworkResponse networkResponse = mNetwork.performRequest(request);
                 request.addMarker("network-http-complete");
-                networkResponse.cacheTime = request.getCacheTime();
-                // If the server returned 304 AND we delivered a requestResponse already,
-                // we're done -- don't deliver a second identical requestResponse.
+
+                // If the server returned 304 AND we delivered a response already,
+                // we're done -- don't deliver a second identical response.
                 if (networkResponse.notModified && request.hasHadResponseDelivered()) {
                     request.finish("not-modified");
-                    mCache.update(request.getCacheKey(), request.getCacheTime());
+                    request.notifyListenerResponseNotUsable();
+                    continue;
                 }
 
-                // Parse the requestResponse here on the worker thread.
-                RequestResponse<?> requestResponse = request.parseNetworkResponse(networkResponse);
-
+                // Parse the response here on the worker thread.
+                Response<?> response = request.parseNetworkResponse(networkResponse);
                 request.addMarker("network-parse-complete");
+
                 // Write to cache if applicable.
                 // TODO: Only update cache metadata instead of entire record for 304s.
-                if (request.shouldCache() && requestResponse.cacheEntry != null) {
-                    mCache.put(request.getCacheKey(), requestResponse.cacheEntry);
+                if (request.shouldCache() && response.cacheEntry != null) {
+                    mCache.put(request.getCacheKey(), response.cacheEntry);
                     request.addMarker("network-cache-written");
                 }
 
-                // Post the requestResponse back.
+                // Post the response back.
                 request.markDelivered();
-                mDelivery.postResponse(request, requestResponse);
-            } catch (ParseError volleyError) {
-                VolleyLog.e(volleyError, "Unhandled exception %s", volleyError.toString());
-                parseAndDeliverNetworkError(request, volleyError);
-                mCache.remove(request.getCacheKey());
+                mDelivery.postResponse(request, response);
+                request.notifyListenerResponseReceived(response);
             } catch (VolleyError volleyError) {
-                VolleyLog.e(volleyError, "Unhandled exception %s", volleyError.toString());
+                volleyError.setNetworkTimeMs(SystemClock.elapsedRealtime() - startTimeMs);
                 parseAndDeliverNetworkError(request, volleyError);
+                request.notifyListenerResponseNotUsable();
             } catch (Exception e) {
                 VolleyLog.e(e, "Unhandled exception %s", e.toString());
-                mDelivery.postError(request, new VolleyError(e));
-                mCache.remove(request.getCacheKey());
+                VolleyError volleyError = new VolleyError(e);
+                volleyError.setNetworkTimeMs(SystemClock.elapsedRealtime() - startTimeMs);
+                mDelivery.postError(request, volleyError);
+                request.notifyListenerResponseNotUsable();
             }
         }
     }

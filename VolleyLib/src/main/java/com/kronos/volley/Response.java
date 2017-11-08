@@ -1,7 +1,7 @@
 package com.kronos.volley;
 
 
-public class RequestResponse<T> {
+public class Response<T> {
 
     public interface Listener<T> {
 
@@ -15,13 +15,13 @@ public class RequestResponse<T> {
     }
 
 
-    public static <T> RequestResponse<T> success(T result, Cache.Entry cacheEntry) {
-        return new RequestResponse<T>(result, cacheEntry);
+    public static <T> Response<T> success(T result, Cache.Entry cacheEntry) {
+        return new Response<T>(result, cacheEntry);
     }
 
 
-    public static <T> RequestResponse<T> error(VolleyError error) {
-        return new RequestResponse<T>(error);
+    public static <T> Response<T> error(VolleyError error) {
+        return new Response<T>(error);
     }
 
 
@@ -48,13 +48,13 @@ public class RequestResponse<T> {
     }
 
 
-    private RequestResponse(T result, Cache.Entry cacheEntry) {
+    private Response(T result, Cache.Entry cacheEntry) {
         this.result = result;
         this.cacheEntry = cacheEntry;
         this.error = null;
     }
 
-    private RequestResponse(VolleyError error) {
+    private Response(VolleyError error) {
         this.result = null;
         this.cacheEntry = null;
         this.error = error;

@@ -18,7 +18,7 @@ package com.kronos.volley.toolbox;
 
 
 import com.kronos.volley.Request;
-import com.kronos.volley.RequestResponse;
+import com.kronos.volley.Response;
 import com.kronos.volley.VolleyError;
 
 import java.util.concurrent.ExecutionException;
@@ -27,8 +27,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 
-public class RequestFuture<T> implements Future<T>, RequestResponse.Listener<T>,
-       RequestResponse.ErrorListener {
+public class RequestFuture<T> implements Future<T>, Response.Listener<T>,
+       Response.ErrorListener {
     private Request<?> mRequest;
     private boolean mResultReceived = false;
     private T mResult;

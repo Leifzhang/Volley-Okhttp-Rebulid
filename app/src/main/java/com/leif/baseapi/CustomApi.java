@@ -8,7 +8,7 @@ import android.util.Patterns;
 
 import com.kronos.rx2adapter.RxVolleyAdapter;
 import com.kronos.volley.Request;
-import com.kronos.volley.RequestResponse;
+import com.kronos.volley.Response;
 import com.kronos.volley.VolleyError;
 import com.kronos.volley.toolbox.BaseApiParser;
 import com.kronos.volley.toolbox.StringRequest;
@@ -80,7 +80,7 @@ public abstract class CustomApi<T> implements BaseApi {
             return null;
         }
         StringRequest request = new StringRequest(url);
-        request.setErrorListener(new RequestResponse.ErrorListener() {
+        request.setErrorListener(new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 try {
