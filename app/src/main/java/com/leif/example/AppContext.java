@@ -20,7 +20,8 @@ public class AppContext extends Application {
     public void onCreate() {
         super.onCreate();
         app = this;
-        RealmConfiguration config = new RealmConfiguration.Builder(this)
+        Realm.init(this);
+        RealmConfiguration config = new RealmConfiguration.Builder()
                 .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(config);

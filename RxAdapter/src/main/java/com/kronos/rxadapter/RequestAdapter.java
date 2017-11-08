@@ -1,6 +1,7 @@
 package com.kronos.rxadapter;
 
 import com.kronos.volley.RequestResponse;
+import com.kronos.volley.Response;
 import com.kronos.volley.VolleyError;
 import com.kronos.volley.toolbox.NetResponse;
 import com.kronos.volley.toolbox.StringRequest;
@@ -10,7 +11,7 @@ import com.kronos.volley.toolbox.StringRequest;
  * Email leifzhanggithub@gmail.com
  */
 
-public class RequestAdapter implements RequestResponse.Listener<NetResponse>, RequestResponse.ErrorListener {
+public class RequestAdapter implements Response.Listener<NetResponse>,Response.ErrorListener {
     private NetResponse netResponse;
     private boolean isReady = false;
     private boolean isFinish = false;
