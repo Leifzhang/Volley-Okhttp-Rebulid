@@ -130,7 +130,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
      * Whether or not a response has been delivered for this request yet.
      */
     // @GuardedBy("mLock")
-    private boolean mResponseDelivered = false;
+    private boolean mResponseDelivered = true;
 
     /**
      * Whether the request should be retried in the event of an HTTP 5xx (server) error.

@@ -104,11 +104,13 @@ public class NetworkDispatcher extends Thread {
                 // Perform the network request.
                 NetworkResponse networkResponse = mNetwork.performRequest(request);
                 request.addMarker("network-http-complete");
+                networkResponse.cacheTime = request.getCacheTime();
 
                 // If the server returned 304 AND we delivered a response already,
                 // we're done -- don't deliver a second identical response.
                 if (networkResponse.notModified && request.hasHadResponseDelivered()) {
                     request.finish("not-modified");
+                    mCache.update(request.getCacheKey(), request.getCacheTime());
                     request.notifyListenerResponseNotUsable();
                     continue;
                 }
