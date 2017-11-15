@@ -1,6 +1,5 @@
 package com.kronos.rxadapter;
 
-import com.kronos.volley.RequestResponse;
 import com.kronos.volley.Response;
 import com.kronos.volley.VolleyError;
 import com.kronos.volley.toolbox.NetResponse;

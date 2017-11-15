@@ -44,17 +44,14 @@ public class OkHttpStack implements HttpStack {
         okhttp3.Request.Builder okHttpRequestBuilder =
                 new okhttp3.Request.Builder();
         okHttpRequestBuilder.url(request.getUrl());
-
         Map<String, String> headers = request.getHeaders();
-        headers.putAll(mHeaders);
-        for (final String name : headers.keySet()) {
-            okHttpRequestBuilder.addHeader(name, headers.get(name));
+        mHeaders.putAll(headers);
+        for (final String name : mHeaders.keySet()) {
+            okHttpRequestBuilder.addHeader(name, mHeaders.get(name));
         }
-
         for (final String name : additionalHeaders.keySet()) {
             okHttpRequestBuilder.addHeader(name, additionalHeaders.get(name));
         }
-
         setConnectionParametersForRequest(okHttpRequestBuilder, request);
 
         okhttp3.Request okHttpRequest = okHttpRequestBuilder.build();
