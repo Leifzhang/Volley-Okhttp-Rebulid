@@ -80,7 +80,7 @@ public class NetworkDispatcher extends Thread {
             try {
                 // Take a request from the queue.
                 request = mQueue.take();
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 // We may have been interrupted because it was time to quit.
                 if (mQuit) {
                     return;
