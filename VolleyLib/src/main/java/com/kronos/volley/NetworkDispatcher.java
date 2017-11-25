@@ -108,12 +108,12 @@ public class NetworkDispatcher extends Thread {
 
                 // If the server returned 304 AND we delivered a response already,
                 // we're done -- don't deliver a second identical response.
-                if (networkResponse.notModified && request.hasHadResponseDelivered()) {
+   /*             if (networkResponse.notModified && request.hasHadResponseDelivered()) {
                     request.finish("not-modified");
                     mCache.update(request.getCacheKey(), request.getCacheTime());
                     request.notifyListenerResponseNotUsable();
                     continue;
-                }
+                }*/
 
                 // Parse the response here on the worker thread.
                 Response<?> response = request.parseNetworkResponse(networkResponse);

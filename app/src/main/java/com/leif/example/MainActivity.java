@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onSuccess(List<ReposEntity> model, boolean isCache) {
+                Log.i("ReposApi", String.valueOf(isCache));
                 for (ReposEntity entity : model) {
                     Toast.makeText(MainActivity.this, entity.getName() + "    " + i++, Toast.LENGTH_SHORT).show();
                 }
