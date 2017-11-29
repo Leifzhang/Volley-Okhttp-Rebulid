@@ -87,6 +87,10 @@ public class CacheDispatcher extends Thread {
             try {
                 // Get a request from the cache triage queue, blocking until
                 // at least one is available.
+                if (mCacheQueue.isEmpty()) {
+                    Thread.sleep(100);
+                    continue;
+                }
                 final Request<?> request = mCacheQueue.take();
                 request.addMarker("cache-queue-take");
 

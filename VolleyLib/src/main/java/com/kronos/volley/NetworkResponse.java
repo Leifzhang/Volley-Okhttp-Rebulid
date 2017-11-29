@@ -56,6 +56,7 @@ public class NetworkResponse {
 
     public NetworkResponse(byte[] data, Map<String, String> headers) {
         this(HttpURLConnection.HTTP_OK, data, headers, false);
+        isCache = true;
     }
 
     /**
