@@ -23,10 +23,7 @@ import com.kronos.volley.Network;
 import com.kronos.volley.RequestQueue;
 
 import java.io.File;
-import java.security.GeneralSecurityException;
 import java.util.concurrent.TimeUnit;
-
-import javax.net.ssl.SSLContext;
 
 import okhttp3.OkHttpClient;
 
@@ -37,20 +34,12 @@ public class Volley {
 
     public static RequestQueue newRequestQueue(Context context) {
         File cacheDir = new File(context.getCacheDir(), DEFAULT_CACHE_DIR);
-
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .build();
         HttpStack stack = new OkHttpStack(client);
-        SSLContext sslContext;
-        try {
-            sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, null, null);
-        } catch (GeneralSecurityException e) {
-            throw new AssertionError(); // The system has no TLS. Just give up.
-        }
         Network network = new BasicNetwork(stack);
         RequestQueue queue = new RequestQueue(new LruDiskCache(cacheDir), network);
         queue.start();

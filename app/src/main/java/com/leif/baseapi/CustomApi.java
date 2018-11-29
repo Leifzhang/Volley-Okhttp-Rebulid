@@ -22,6 +22,7 @@ import java.util.Set;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 
 /**
@@ -123,9 +124,9 @@ public abstract class CustomApi<T> implements BaseApi {
     @Override
     public void start() {
         Request request = getRequest();
-        RxVolleyAdapter.getObservable((StringRequest) request).observeOn(AndroidSchedulers.mainThread())
+        RxVolleyAdapter.INSTANCE.getObservable((StringRequest) request).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(netResponse -> {
-                    Log.i("RxVolley", "NetResponse Action");
+                    Log.i("RxVolley", "NetResponse Action:" + netResponse.isCache);
                     responseListener.onSuccess((T) netResponse.data, netResponse.isCache);
                 }, throwable -> {
                     if (throwable instanceof VolleyError) {
@@ -184,7 +185,7 @@ public abstract class CustomApi<T> implements BaseApi {
 
     public Observable<T> startRequest() {
         Request request = getRequest();
-        Observable<T> observable = RxVolleyAdapter.getObservable((StringRequest) request).map(netResponse -> (T) netResponse.data);
+        Observable<T> observable = RxVolleyAdapter.INSTANCE.getObservable((StringRequest) request).map(netResponse -> (T) netResponse.data);
         VolleyQueue.getInstance().addRequest(request);
         return observable;
     }

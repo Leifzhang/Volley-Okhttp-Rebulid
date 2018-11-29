@@ -60,10 +60,12 @@ public class RequestFuture<T> implements Future<T>, Response.Listener<T>,
 
     @Override
     public T get() throws InterruptedException, ExecutionException {
+
         try {
             return doGet(null);
         } catch (TimeoutException e) {
-            throw new AssertionError(e);
+            e.printStackTrace();
+            return null;
         }
     }
 

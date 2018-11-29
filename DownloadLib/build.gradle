@@ -4,12 +4,12 @@ apply plugin: 'com.jfrog.bintray'
 // This is the library version used when deploying the artifact
 version = PROJ_VERSION
 android {
-    compileSdkVersion 26
-    buildToolsVersion '26.0.0'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
     resourcePrefix "downloadLib__"
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 26
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
     }
@@ -27,9 +27,9 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    provided 'com.squareup.okhttp3:okhttp:3.9.0'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.12'
+    compileOnly 'com.squareup.okhttp3:okhttp:3.11.0'
 }
 
 def siteUrl = 'https://github.com/Leifzhang/Volley-Okhttp-Rebulid' // 项目的主页
