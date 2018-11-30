@@ -41,7 +41,7 @@ public class Volley {
                 .build();
         HttpStack stack = new OkHttpStack(client);
         Network network = new BasicNetwork(stack);
-        RequestQueue queue = new RequestQueue(new LruDiskCache(cacheDir), network);
+        RequestQueue queue = new RequestQueue(new DiskBasedCache(cacheDir), network);
         queue.start();
         return queue;
     }

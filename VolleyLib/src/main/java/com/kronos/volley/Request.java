@@ -487,7 +487,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
 
     /**
      * Returns the raw POST or PUT body to be sent.
-     *
+     * <p>
      * <p>By default, the body consists of the request parameters in
      * application/x-www-form-urlencoded format. When overriding this method, consider overriding
      * {@link #getBodyContentType()} as well to match the new body format.
@@ -620,7 +620,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
 
     /**
      * Subclasses can override this method to parse 'networkError' and return a more specific error.
-     *
+     * <p>
      * <p>The default implementation just returns the passed 'networkError'.</p>
      *
      * @param volleyError the error retrieved from the network
@@ -764,7 +764,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
         return this;
     }
 
-    public BaseApiParser getApiParser() {
+    protected BaseApiParser getApiParser() {
         return apiParser;
     }
 

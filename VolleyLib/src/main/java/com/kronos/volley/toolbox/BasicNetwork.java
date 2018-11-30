@@ -31,6 +31,7 @@ import com.kronos.volley.VolleyError;
 import com.kronos.volley.VolleyLog;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
@@ -80,7 +81,7 @@ public class BasicNetwork implements Network {
             Map<String, String> requestHeader = request.getHeaders();
             try {
                 // Gather headers.
-                Map<String, String> headers = new HashMap<String, String>();
+                Map<String, String> headers = new HashMap<>();
                 addCacheHeaders(headers, request.getCacheEntry());
                 httpResponse = mHttpStack.performRequest(request, headers);
                 int statusCode = httpResponse.code();
@@ -92,8 +93,9 @@ public class BasicNetwork implements Network {
                             responseHeader, true);
                 }
                 // Some responses such as 204s do not have content.  We must check.
-                if (httpResponse.body() != null) {
-                    responseContents = entityToBytes(httpResponse.body());
+                ResponseBody responseBody = httpResponse.body();
+                if (responseBody != null) {
+                    responseContents = entityToBytes(responseBody);
                 } else {
                     // Add 0 byte response as a way of honestly representing a
                     // no-content request.
@@ -125,10 +127,10 @@ public class BasicNetwork implements Network {
                         attemptRetryOnException("auth",
                                 request, new AuthFailureError(networkResponse));
                     } else {*/
-                        throw new ServerError(networkResponse);
+                    throw new ServerError(networkResponse);
                     // }
                 } else {
-                    throw new NetworkError(networkResponse);
+                    attemptRetryOnException("network", request, new NetworkError());
                 }
             }
         }
@@ -194,8 +196,39 @@ public class BasicNetwork implements Network {
      * Reads the contents of HttpEntity into a byte[].
      */
     private byte[] entityToBytes(ResponseBody responseBody) throws IOException, ServerError {
-        return responseBody.bytes();
+        return inputStreamToBytes(responseBody.byteStream(), responseBody.contentLength());
     }
 
-
+    /**
+     * Reads the contents of an InputStream into a byte[].
+     */
+    private byte[] inputStreamToBytes(InputStream in, long contentLength)
+            throws IOException, ServerError {
+        PoolingByteArrayOutputStream bytes = new PoolingByteArrayOutputStream(mPool, (int) contentLength);
+        byte[] buffer = null;
+        try {
+            if (in == null) {
+                throw new ServerError();
+            }
+            buffer = mPool.getBuf(1024);
+            int count;
+            while ((count = in.read(buffer)) != -1) {
+                bytes.write(buffer, 0, count);
+            }
+            return bytes.toByteArray();
+        } finally {
+            try {
+                // Close the InputStream and release the resources by "consuming the content".
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException e) {
+                // This can happen if there was an exception above that left the stream in
+                // an invalid state.
+                VolleyLog.v("Error occurred when closing InputStream");
+            }
+            mPool.returnBuf(buffer);
+            bytes.close();
+        }
+    }
 }
