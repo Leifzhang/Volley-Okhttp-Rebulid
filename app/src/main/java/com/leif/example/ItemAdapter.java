@@ -11,10 +11,14 @@ import android.widget.TextView;
 import com.kronos.download.DownloadConstants;
 import com.kronos.download.DownloadManager;
 import com.kronos.download.DownloadModel;
+import com.kronos.download.RxDownload;
 import com.kronos.download.adapter.IObserver;
 import com.leif.moudle.ItemEntity;
 
 import java.util.List;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
 
 /**
  * Created by Leif Zhang on 2016/10/8.
@@ -74,10 +78,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                     model1 = DownloadManager.getInstance()
                             .getModel(itemEntity.getDownloadUrl());
                     final DownloadModel finalModel = model1;
-                    model1.registerDataSetObserver(new IObserver() {
+                    RxDownload.getDownload(itemEntity.getDownloadUrl()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<Integer>() {
                         @Override
-                        public void onChanged() {
-                            progressBar.setProgress(finalModel.getProgress());
+                        public void accept(Integer integer) throws Exception {
+                            progressBar.setProgress(integer);
                         }
                     });
                 }
