@@ -14,6 +14,7 @@ import java.util.Map;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 /**
  * Created by Leif Zhang on 16/9/29.
@@ -23,6 +24,7 @@ public class DownloadManager {
     private static DownloadManager ourInstance = new DownloadManager();
     private HashMap<String, DownloadModel> models;
     private DownloadConfig config;
+
     public static DownloadManager getInstance() {
         return ourInstance;
     }
@@ -47,7 +49,7 @@ public class DownloadManager {
         if (downloadModel == null) {
             downloadModel = new DownloadModel();
             downloadModel.setFileName(fileName);
-            downloadModel.setDownloadUrl(url);
+            downloadModel.setDownloadUrl(url    );
             downloadModel.setSuffixName(getInstance().config.getSettingConfig().getFileSuffix());
             downloadModel.setDownloadFolder(getInstance().config.getDownloadFolder());
             getInstance().putModel(url, downloadModel);
@@ -79,10 +81,11 @@ public class DownloadManager {
     public void startAll(Context context) {
         if (config.getSettingConfig().isAutoDownload() || FileUtils.isConnectWIFI(context)) {
             for (Map.Entry<String, DownloadModel> entry : models.entrySet()) {
-            entry.getValue().setState(DownloadConstants.DOWNLOADING);
-            Intent intent = new Intent(context, DownloadService.class);
-            intent.putExtra("url", entry.getKey());
-            context.startService(intent);
+                DownloadModel model = entry.getValue();
+                model.setState(DownloadConstants.DOWNLOADING);
+                Intent intent = new Intent(context, DownloadService.class);
+                intent.putExtra("url", entry.getKey());
+                context.startService(intent);
             }
         }
     }
@@ -128,13 +131,7 @@ public class DownloadManager {
         final Request request = new Request.Builder().url(downloadModel.getDownloadUrl())
                 .addHeader("RANGE", range).build();
         Response response = getOkHttpClient().newCall(request).execute();
-        ProgressResponseBody responseBody = new ProgressResponseBody(response.body(),
-                new ProgressResponseBody.ProgressListener() {
-                    @Override
-                    public void update(long bytesRead, long contentLength, boolean done) {
-                        //Log.i("DownloadManager", "DownloadManager:" + downloadModel.getProgress());
-                    }
-                });
+        ResponseBody responseBody = response.body();
         if (downloadModel.getState() == 0) {
             downloadModel.setState(DownloadConstants.DOWNLOADING);
         }
@@ -142,7 +139,7 @@ public class DownloadManager {
             downloadModel.setTotalLength(responseBody.contentLength());
         }
         writeFile(downloadModel, responseBody.byteStream());
-        if (downloadModel.getDownloadLength() == downloadModel.getTotalLength()) {
+        if (downloadModel.check()) {
             downloadModel.setState(DownloadConstants.DOWNLOAD_FINISH);
         }
     }
