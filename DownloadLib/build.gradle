@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 // This is the library version used when deploying the artifact
@@ -32,6 +33,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     compileOnly 'com.squareup.okhttp3:okhttp:3.11.0'
     compileOnly 'io.reactivex.rxjava2:rxandroid:2.0.2'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 def siteUrl = 'https://github.com/Leifzhang/Volley-Okhttp-Rebulid' // 项目的主页
@@ -99,4 +101,7 @@ bintray {
         licenses = ["Apache-2.0"]
         publish = true
     }
+}
+repositories {
+    mavenCentral()
 }

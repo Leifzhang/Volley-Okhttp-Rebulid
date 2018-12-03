@@ -5,6 +5,8 @@ import com.kronos.download.DownloadConfig;
 import com.kronos.download.DownloadModel;
 import com.kronos.download.IDownloadDb;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +20,7 @@ import io.realm.RealmResults;
  */
 public class DataBase implements IDownloadDb {
     @Override
-    public void saveToDb(DownloadModel model) {
+    public void saveToDb(@Nullable DownloadModel model) {
         Realm.getDefaultInstance().executeTransaction(realm -> {
             DownloadRealm downloadRealm = Realm.getDefaultInstance().where(DownloadRealm.class)
                     .equalTo("downloadUrl", model.getDownloadUrl()).findFirst();
@@ -35,7 +37,7 @@ public class DataBase implements IDownloadDb {
     }
 
     @Override
-    public void saveToDb(HashMap<String, DownloadModel> models) {
+    public void saveToDb(@Nullable HashMap<String, DownloadModel> models) {
         Observable.just(models).subscribe(modelHashMap -> Realm.getDefaultInstance().executeTransaction(realm -> {
             for (Map.Entry<String, DownloadModel> entry : modelHashMap.entrySet()) {
                 DownloadModel downloadModel = entry.getValue();

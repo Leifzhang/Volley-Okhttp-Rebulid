@@ -27,8 +27,8 @@ public class AppContext extends Application {
         Realm.setDefaultConfiguration(config);
         DownloadSettingConfig settingConfig = new DownloadSettingConfig().setAutoDownload(true).setFileSuffix(".temp");
         DownloadConfig downloadConfig = new DownloadConfig.Builder().setDownloadDb(new DataBase()).setSettingConfig(settingConfig).builder();
-        DownloadManager.getInstance().setConfig(downloadConfig);
-        DownloadManager.getInstance().startAll(this);
+        DownloadManager.INSTANCE.setConfig(downloadConfig);
+        DownloadManager.INSTANCE.startAll(this);
     }
 
     @Override

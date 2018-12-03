@@ -64,21 +64,20 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
             title.setText(itemEntity.getTitle());
             setState(itemEntity);
             button.setOnClickListener(v -> {
-                DownloadModel model1 = DownloadManager.getInstance()
+                DownloadModel model1 = DownloadManager.INSTANCE
                         .getModel(itemEntity.getDownloadUrl());
                 if (model1 != null) {
                     if (model1.getState() == DownloadConstants.DOWNLOADING) {
                         model1.setState(DownloadConstants.DOWNLOAD_PAUSE);
                     } else {
                         model1.setState(DownloadConstants.DOWNLOADING);
-                        DownloadManager.setDownloadModel(itemEntity.getDownloadUrl(), itemView.getContext());
+                        DownloadManager.INSTANCE.setDownloadModel(itemEntity.getDownloadUrl(), itemView.getContext());
                     }
                 } else {
-                    DownloadManager.setDownloadModel(itemEntity.getDownloadUrl(), itemView.getContext());
-                    model1 = DownloadManager.getInstance()
-                            .getModel(itemEntity.getDownloadUrl());
+                    DownloadManager.INSTANCE.setDownloadModel(itemEntity.getDownloadUrl(), itemView.getContext());
+                    model1 = DownloadManager.INSTANCE.getModel(itemEntity.getDownloadUrl());
                     final DownloadModel finalModel = model1;
-                    RxDownload.getDownload(itemEntity.getDownloadUrl()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<Integer>() {
+                    RxDownload.INSTANCE.getDownload(itemEntity.getDownloadUrl()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<Integer>() {
                         @Override
                         public void accept(Integer integer) throws Exception {
                             progressBar.setProgress(integer);
@@ -90,7 +89,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         }
 
         private void setState(ItemEntity itemEntity) {
-            DownloadModel model = DownloadManager.getInstance()
+            DownloadModel model = DownloadManager.INSTANCE
                     .getModel(itemEntity.getDownloadUrl());
             if (model != null) {
                 model.unregisterAll();
