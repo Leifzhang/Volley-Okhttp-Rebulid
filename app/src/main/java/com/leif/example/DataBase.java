@@ -1,11 +1,11 @@
 package com.leif.example;
 
 
+import android.support.annotation.Nullable;
+
 import com.kronos.download.DownloadConfig;
 import com.kronos.download.DownloadModel;
 import com.kronos.download.IDownloadDb;
-
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;

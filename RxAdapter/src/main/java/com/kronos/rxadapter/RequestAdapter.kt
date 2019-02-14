@@ -42,7 +42,7 @@ class RequestAdapter(private val request: StringRequest) : Response.Listener<Net
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            onErrorResponse(VolleyError())
+            subscriber?.onError(e)
         }
 
     }

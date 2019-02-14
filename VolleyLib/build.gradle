@@ -27,7 +27,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.squareup.okhttp3:okhttp:3.11.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.13.1'
 }
 def siteUrl = 'https://github.com/Leifzhang/Volley-Okhttp-Rebulid' // 项目的主页
 def gitUrl = 'https://github.com/Leifzhang/Volley-Okhttp-Rebulid.git' // Git仓库的url

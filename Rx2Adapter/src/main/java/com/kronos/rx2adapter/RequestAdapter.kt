@@ -41,7 +41,7 @@ class RequestAdapter internal constructor(private val request: StringRequest) : 
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            onErrorResponse(VolleyError())
+            emitter?.onError(e)
         }
 
     }
