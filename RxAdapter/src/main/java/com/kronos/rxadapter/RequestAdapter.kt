@@ -28,7 +28,7 @@ class RequestAdapter(private val request: StringRequest) : Response.Listener<Net
         volleyError = error
         isFinish = true
         isReady = true
-        subscriber!!.onError(volleyError)
+        subscriber?.onError(volleyError)
     }
 
     override fun onResponse(response: NetResponse) {
@@ -36,9 +36,9 @@ class RequestAdapter(private val request: StringRequest) : Response.Listener<Net
             netResponse = response
             isReady = true
             isFinish = !request.isRefreshNeed || !response.isCache
-            subscriber!!.onNext(netResponse)
+            subscriber?.onNext(netResponse)
             if (isFinish) {
-                subscriber!!.onCompleted()
+                subscriber?.onCompleted()
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -49,5 +49,11 @@ class RequestAdapter(private val request: StringRequest) : Response.Listener<Net
 
     override fun call(subscriber: Subscriber<in NetResponse>) {
         this.subscriber = subscriber
+        if (netResponse != null) {
+            subscriber?.onNext(netResponse!!)
+            if (isFinish) {
+                subscriber?.onCompleted()
+            }
+        }
     }
 }

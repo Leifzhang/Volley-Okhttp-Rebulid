@@ -97,6 +97,7 @@ object DownloadManager {
         if (downloadModel.downloadLength > downloadModel.totalLength) {
             val file = File(downloadModel.sdCardFile)
             file.delete()
+            downloadModel.downloadLength = 0
             downloadModel.progress = 0
             downloadModel.totalLength = 0
         }

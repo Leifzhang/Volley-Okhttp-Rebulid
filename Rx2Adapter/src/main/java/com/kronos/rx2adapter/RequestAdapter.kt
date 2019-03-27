@@ -28,16 +28,16 @@ class RequestAdapter internal constructor(private val request: StringRequest) : 
     override fun onErrorResponse(error: VolleyError) {
         volleyError = error
         isFinish = true
-        emitter!!.onError(volleyError!!)
+        emitter?.onError(volleyError!!)
     }
 
     override fun onResponse(response: NetResponse) {
         try {
             netResponse = response
             isFinish = !request.isRefreshNeed || !response.isCache
-            emitter!!.onNext(netResponse!!)
+            emitter?.onNext(netResponse!!)
             if (isFinish) {
-                emitter!!.onComplete()
+                emitter?.onComplete()
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -49,5 +49,14 @@ class RequestAdapter internal constructor(private val request: StringRequest) : 
     @Throws(Exception::class)
     override fun subscribe(e: ObservableEmitter<NetResponse>) {
         emitter = e
+        if (netResponse != null) {
+            emitter?.onNext(netResponse!!)
+            if (isFinish) {
+                emitter?.onComplete()
+            }
+        }
+        if (volleyError != null) {
+            emitter?.onError(volleyError!!)
+        }
     }
 }
