@@ -6,7 +6,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 
-import com.kronos.rx2adapter.RxVolleyAdapter;
+import com.kronos.rx2adapter.RxVolleyAdapterKt;
 import com.kronos.volley.Request;
 import com.kronos.volley.Response;
 import com.kronos.volley.VolleyError;
@@ -124,7 +124,9 @@ public abstract class CustomApi<T> implements BaseApi {
     @Override
     public void start() {
         Request request = getRequest();
-        RxVolleyAdapter.INSTANCE.getObservable((StringRequest) request).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        RxVolleyAdapterKt.getObservable((StringRequest) request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(netResponse -> {
                     Log.i("RxVolley", "NetResponse Action:" + netResponse.isCache);
                     responseListener.onSuccess((T) netResponse.data, netResponse.isCache);
@@ -185,7 +187,7 @@ public abstract class CustomApi<T> implements BaseApi {
 
     public Observable<T> startRequest() {
         Request request = getRequest();
-        Observable<T> observable = RxVolleyAdapter.INSTANCE.getObservable((StringRequest) request).map(netResponse -> (T) netResponse.data);
+        Observable<T> observable = RxVolleyAdapterKt.getObservable((StringRequest) request).map(netResponse -> (T) netResponse.data);
         VolleyQueue.getInstance().addRequest(request);
         return observable;
     }

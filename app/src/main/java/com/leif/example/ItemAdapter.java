@@ -1,6 +1,6 @@
 package com.leif.example;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +12,6 @@ import com.kronos.download.DownloadConstants;
 import com.kronos.download.DownloadManager;
 import com.kronos.download.DownloadModel;
 import com.kronos.download.RxDownload;
-import com.kronos.download.adapter.IObserver;
 import com.leif.moudle.ItemEntity;
 
 import java.util.List;
