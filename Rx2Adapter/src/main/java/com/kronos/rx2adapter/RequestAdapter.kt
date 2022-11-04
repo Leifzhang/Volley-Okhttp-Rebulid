@@ -13,12 +13,13 @@ import io.reactivex.ObservableOnSubscribe
  * Email leifzhanggithub@gmail.com
  */
 
-class RequestAdapter internal constructor(private val request: StringRequest) : Response.Listener<NetResponse>,
-        Response.ErrorListener, ObservableOnSubscribe<NetResponse> {
+class RequestAdapter internal constructor(private val request: StringRequest) :
+    Response.Listener<NetResponse>,
+    Response.ErrorListener, ObservableOnSubscribe<NetResponse> {
     private var netResponse: NetResponse? = null
     private var isFinish = false
     private var volleyError: VolleyError? = null
-    private var emitter: ObservableEmitter<NetResponse>? = null
+    private lateinit var emitter: ObservableEmitter<NetResponse>
 
 
     init {
@@ -28,20 +29,19 @@ class RequestAdapter internal constructor(private val request: StringRequest) : 
     override fun onErrorResponse(error: VolleyError) {
         volleyError = error
         isFinish = true
-        emitter?.onError(volleyError!!)
+        emitter.onError(requireNotNull(volleyError))
     }
 
     override fun onResponse(response: NetResponse) {
         try {
             netResponse = response
             isFinish = !request.isRefreshNeed || !response.isCache
-            emitter?.onNext(netResponse!!)
+            emitter.onNext(requireNotNull(netResponse))
             if (isFinish) {
-                emitter?.onComplete()
+                emitter.onComplete()
             }
         } catch (e: Exception) {
-            e.printStackTrace()
-            emitter?.onError(e)
+            emitter.onError(e)
         }
 
     }
@@ -49,14 +49,14 @@ class RequestAdapter internal constructor(private val request: StringRequest) : 
     @Throws(Exception::class)
     override fun subscribe(e: ObservableEmitter<NetResponse>) {
         emitter = e
-        if (netResponse != null) {
-            emitter?.onNext(netResponse!!)
+        netResponse?.apply {
+            emitter.onNext(this)
             if (isFinish) {
-                emitter?.onComplete()
+                emitter.onComplete()
             }
         }
-        if (volleyError != null) {
-            emitter?.onError(volleyError!!)
+        volleyError?.apply {
+            emitter.onError(this)
         }
     }
 }

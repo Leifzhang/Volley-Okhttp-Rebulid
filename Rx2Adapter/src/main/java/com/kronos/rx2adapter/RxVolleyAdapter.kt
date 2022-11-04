@@ -3,6 +3,7 @@ package com.kronos.rx2adapter
 import com.kronos.volley.toolbox.NetResponse
 import com.kronos.volley.toolbox.StringRequest
 import io.reactivex.Observable
+import io.reactivex.Single
 
 
 /**
@@ -10,9 +11,13 @@ import io.reactivex.Observable
  * Email leifzhanggithub@gmail.com
  */
 
-object RxVolleyAdapter {
-    fun getObservable(request: StringRequest): Observable<NetResponse> {
-        val adapter = RequestAdapter(request)
-        return Observable.create(adapter)
-    }
+
+fun StringRequest.getObservable(): Observable<NetResponse> {
+    val adapter = RequestAdapter(this)
+    return Observable.create(adapter)
+}
+
+fun StringRequest.single(): Single<NetResponse> {
+    val adapter = SingleRequestAdapter(this)
+    return Single.create(adapter)
 }

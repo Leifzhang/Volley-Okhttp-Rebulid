@@ -1,17 +1,19 @@
 package com.kronos.volley;
 
 
+import org.jetbrains.annotations.NotNull;
+
 public class Response<T> {
 
     public interface Listener<T> {
 
-        void onResponse(T response);
+        void onResponse(@NotNull T response);
     }
 
 
     public interface ErrorListener {
 
-        void onErrorResponse(VolleyError error);
+        void onErrorResponse(@NotNull VolleyError error);
     }
 
 
